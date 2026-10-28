@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FFD21F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Destrava">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-512.png">
+<link rel="icon" href="/icon-192.png">
+<title>Destrava</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+:root{padding:0}
+body{-webkit-tap-highlight-color:transparent}
+/* Layout: two screens sharing one conversation — a golden voice orb screen and a chat screen with a yellow header and tab bar. Single bright yellow look by design. */
+:root{
+  --sun:#FFD21F; --sun-deep:#F2B705; --sun-soft:#FFF3B8; --cream:#FFFBEA; --paper:#FFFFFF;
+  --ink:#141414; --muted:#6B6550; --line:#F0E3A8; --good:#16A34A; --warn:#C2410C; --warn-soft:#FDECE3;
+  --logo:"Outfit", "Avenir Next", system-ui, sans-serif;
+  --body:"Figtree", -apple-system, "Segoe UI", system-ui, sans-serif;
+  color-scheme:light;
+}
+[hidden]{display:none!important}
+html,body{height:100%}
+.online.off i{background:var(--warn)}
+.online.wait i{background:#D4A000}
+.status.err{color:var(--warn);max-width:340px;text-align:center;text-transform:none;letter-spacing:0;font-weight:600}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.45 var(--body);overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.screen{position:fixed;inset:0;display:flex;flex-direction:column}
+
+/* logo */
+.logo{display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1}
+.logo .word{position:relative;font:800 34px/1 var(--logo);letter-spacing:-.03em}
+.logo .word svg{position:absolute;left:50%;top:-20px;transform:translateX(-42%);width:40px;height:22px}
+.logo .tag{font:700 10px/1 var(--body);letter-spacing:.32em;margin-top:6px}
+.circle{width:48px;height:48px;border-radius:50%;border:0;display:grid;place-items:center;background:rgba(255,255,255,.55);box-shadow:0 4px 14px rgba(160,110,0,.18)}
+.circle svg{width:24px;height:24px}
+
+/* ---------- voice screen ---------- */
+#voice{background:radial-gradient(120% 70% at 50% 18%, #FFF6C9 0%, #FFE26A 38%, #F7C21A 70%, #EDB10A 100%)}
+#voice header{flex:none;display:flex;align-items:center;justify-content:space-between;padding-block:calc(env(safe-area-inset-top,0px) + 30px) 0}
+.lvl{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:14px;background:none;border:0;padding:0}
+.lvl .lab{font-size:12px;font-weight:700;letter-spacing:.06em}
+.lvl .bar{width:150px;height:6px;border-radius:999px;background:rgba(20,20,20,.12);overflow:hidden}
+.lvl .bar i{display:block;height:100%;width:0;background:var(--ink);border-radius:999px;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.stage{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;position:relative}
+#orb{width:100%;flex:1;min-height:0;display:block}
+.status{font-size:14px;font-weight:700;letter-spacing:.04em;color:rgba(20,20,20,.7);min-height:1.4em}
+.cc{max-width:520px;text-align:center;font:600 18px/1.35 var(--logo);min-height:1.4em;padding-inline:8px;text-wrap:balance}
+.cc[hidden]{display:none}
+.xp{position:absolute;top:10%;font:800 16px/1 var(--logo);opacity:0;transform:translateY(8px);transition:.35s}
+.xp.show{opacity:1;transform:none}
+#voice footer{flex:none;display:flex;align-items:center;gap:10px;padding-block:0 calc(env(safe-area-inset-bottom,0px) + 14px)}
+.pillin{flex:1;min-width:0;height:52px;border-radius:999px;border:0;background:rgba(255,255,255,.5);padding:0 18px;font:inherit;color:var(--ink)}
+.pillin::placeholder{color:rgba(20,20,20,.5)}
+.micdark{flex:none;width:56px;height:56px;border-radius:50%;border:0;display:grid;place-items:center;background:#5A4300;color:#FFE27A}
+.micdark.on{background:var(--ink);color:var(--sun)}
+.micdark svg{width:26px;height:26px}
+.closebig{width:60px;height:60px;background:rgba(255,255,255,.75)}
+
+/* ---------- chat screen ---------- */
+#chat{background:var(--cream)}
+.chead{flex:none;background:var(--sun);border-radius:0 0 26px 26px;padding-block:calc(env(safe-area-inset-top,0px) + 14px) 16px;display:grid;grid-template-columns:48px 1fr auto;align-items:center;gap:8px}
+.chead .logo .word{font-size:30px}
+.chead .logo .tag{font-size:8px;letter-spacing:.2em;white-space:nowrap}
+.chead{padding-top:calc(env(safe-area-inset-top,0px) + 28px)!important}
+.hbtn{width:44px;height:44px;border:0;background:none;display:grid;place-items:center}
+.hbtn svg{width:28px;height:28px}
+.right{display:flex;gap:8px;align-items:center}
+.online{display:flex;align-items:center;gap:6px;background:var(--sun-soft);border-radius:999px;padding:7px 12px;font-size:14px;font-weight:600;white-space:nowrap}
+.online i{width:9px;height:9px;border-radius:50%;background:var(--good)}
+.me{width:44px;height:44px;border-radius:50%;border:0;background:var(--ink);color:var(--sun);display:grid;place-items:center}
+.me svg{width:24px;height:24px}
+@media (max-width:380px){.online span{display:none}.chead .logo .word{font-size:26px}}
+.feed{flex:1;min-height:0;overflow-y:auto;padding-block:16px;display:flex;flex-direction:column;gap:14px}
+.feed > *{max-width:640px;width:100%;margin-inline:auto}
+.m{display:flex;gap:10px;align-items:flex-start}
+.av{flex:none;width:44px;height:44px;border-radius:50%;background:var(--sun);display:grid;place-items:center}
+.av svg{width:28px;height:28px}
+.col{display:flex;flex-direction:column;gap:4px;min-width:0;max-width:80%}
+.b{background:var(--paper);border-radius:18px;padding:12px 15px;box-shadow:0 2px 10px rgba(120,90,0,.07)}
+.m.u{justify-content:flex-end}
+.m.u .col{align-items:flex-end}
+.m.u .b{background:var(--sun);border-radius:18px 4px 18px 18px;box-shadow:none}
+.time{font-size:12px;color:var(--muted);padding-inline:6px;font-variant-numeric:tabular-nums}
+.b .en{font-weight:500}
+.b .pt{color:var(--muted);font-size:15px;margin-top:4px}
+.fix{background:var(--warn-soft);border-radius:12px;padding:8px 10px;margin-bottom:8px;font-size:15px}
+.fix b{display:block;color:var(--warn);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.fix .ok{font-weight:700}
+.hl{color:var(--sun-deep);font-weight:700}
+.voc{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.voc span{background:var(--sun-soft);border-radius:999px;padding:2px 10px;font-size:13px;font-weight:600}
+.play{border:0;background:none;padding:2px 6px;font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:4px}
+.play svg{width:14px;height:14px}
+.typing{color:var(--muted);font-style:italic}
+.quick{flex:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding-block:6px;max-width:640px;width:100%;margin-inline:auto;box-sizing:border-box}
+.q{display:flex;align-items:center;gap:8px;background:var(--sun-soft);border:1px solid var(--line);border-radius:999px;padding:9px 12px;font-size:14px;font-weight:600;text-align:left;min-width:0}
+.q svg{flex:none;width:20px;height:20px}
+.q span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inbar{flex:none;display:flex;align-items:center;gap:8px;background:var(--paper);border-radius:999px;padding:6px;margin-block:8px;box-shadow:0 2px 12px rgba(120,90,0,.1);max-width:640px;width:calc(100% - 2*max(16px,env(safe-area-inset-left,0px)));margin-inline:auto;box-sizing:border-box}
+.plus{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:var(--sun);display:grid;place-items:center}
+.plus svg,.send svg,.mic svg{width:22px;height:22px}
+.inbar textarea{flex:1;min-width:0;border:0;background:none;resize:none;font:inherit;padding:10px 4px;max-height:96px;color:var(--ink)}
+.inbar textarea:focus-visible{outline:none}
+.mic{flex:none;border:0;background:none;width:40px;height:40px;display:grid;place-items:center}
+.send{flex:none;width:48px;height:48px;border-radius:50%;border:0;background:var(--sun-deep);display:grid;place-items:center}
+.send:disabled{opacity:.5}
+.tabs{flex:none;background:var(--sun);border-radius:26px 26px 0 0;display:grid;grid-template-columns:repeat(4,1fr);padding-block:10px calc(env(safe-area-inset-bottom,0px) + 8px)}
+.tabs button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:13px;font-weight:600;padding:4px}
+.tabs button svg{width:28px;height:28px}
+.tabs button[aria-current="page"]{font-weight:800}
+.tabs button[aria-current="page"]::after{content:"";width:40px;height:3px;border-radius:3px;background:var(--ink)}
+
+/* ---------- sheets ---------- */
+.sheet{position:fixed;inset:0;z-index:30;background:rgba(40,30,0,.4);display:flex;align-items:flex-end;justify-content:center}
+.panel{background:var(--cream);width:100%;max-width:640px;max-height:88vh;overflow-y:auto;border-radius:24px 24px 0 0;box-sizing:border-box;padding-block:20px calc(20px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px}
+.panel h2{font:800 24px/1.15 var(--logo);margin:0;letter-spacing:-.02em}
+.panel p{margin:0;color:var(--muted)}
+.big{background:var(--sun);border:0;border-radius:16px;padding:15px 18px;font-weight:800;font-size:17px}
+.line{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:12px 14px;text-align:left;display:flex;flex-direction:column}
+.line b{font-weight:700}
+.line span{color:var(--muted);font-size:14px}
+.field{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700}
+.field input{border:1px solid var(--line);background:var(--paper);border-radius:12px;padding:12px;font:inherit;font-weight:400;color:var(--ink)}
+.seg{display:inline-flex;background:var(--paper);border:1px solid var(--line);border-radius:999px;overflow:hidden;align-self:flex-start}
+.seg button{border:0;background:none;padding:8px 14px;font-size:14px;font-weight:600}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--sun)}
+.toggle{display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.toggle input{width:22px;height:22px;accent-color:var(--ink)}
+.closer{align-self:flex-end;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 14px;font-weight:600}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.stat{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:12px}
+.stat .v{font:800 24px/1 var(--logo);font-variant-numeric:tabular-nums}
+.stat .l{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:4px}
+.lvlbig{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.lvlbig .top{display:flex;justify-content:space-between;align-items:baseline;font-weight:700}
+.lvlbig .top b{font:800 26px/1 var(--logo)}
+.lvlbig .track{height:10px;border-radius:999px;background:var(--sun-soft);overflow:hidden}
+.lvlbig .track i{display:block;height:100%;background:var(--sun-deep);border-radius:999px}
+.lvlbig .ticks{display:grid;grid-template-columns:repeat(5,1fr);font-size:11px;font-weight:800;color:var(--muted);text-align:center}
+.lvlbig .ticks .on{color:var(--ink)}
+.list{background:var(--paper);border:1px solid var(--line);border-radius:16px}
+.row{display:flex;justify-content:space-between;gap:12px;padding:10px 14px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row span{color:var(--muted)}
+.count{font-weight:800;color:var(--warn)}
+h3{font:800 17px/1.2 var(--logo);margin:6px 0 0}
+.empty{color:var(--muted);padding:12px 14px;font-size:15px}
+.note{font-size:13px;color:var(--muted)}
+.tip{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 90px);z-index:25;background:var(--ink);color:var(--sun-soft);border-radius:14px;padding:10px 14px;font-size:14px;max-width:min(92vw,420px);text-align:center;box-sizing:border-box}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- ===================== VOICE ===================== -->
+<section class="screen" id="voice">
+  <header class="gut">
+    <button class="circle" id="toChat" aria-label="Ver conversa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <div class="logo"><span class="word"><svg viewBox="0 0 40 22" fill="none" stroke="#141414" stroke-width="2.6" stroke-linecap="round"><path d="M20 2v5M10 5l3 4M30 5l-3 4M4 12l4 2M36 12l-4 2"/></svg>Destrava</span><span class="tag">SEU INGLÊS NA PRÁTICA</span></div>
+      <button class="lvl" id="lvlBtn" aria-label="Ver meu progresso"><span class="lab" id="lvlLab">A1 · INICIANTE</span><span class="bar"><i id="lvlFill"></i></span></button>
+    </div>
+    <button class="circle" id="voiceSettings" aria-label="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="17" r="2.4"/></svg></button>
+  </header>
+  <div class="stage gut">
+    <span class="xp" id="xpPop">+20 XP</span>
+    <canvas id="orb" aria-hidden="true"></canvas>
+    <div class="status" id="status" aria-live="polite">Toque no microfone e fale</div>
+    <div class="cc" id="cc" hidden></div>
+  </div>
+  <footer class="gut">
+    <button class="circle" id="voicePlus" aria-label="Comandos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+    <form id="voiceForm" style="flex:1;min-width:0;display:flex"><input class="pillin" id="voiceInput" placeholder="Enviar mensagem…" autocomplete="off" enterkeyhint="send" aria-label="Sua resposta"></form>
+    <button class="micdark" id="voiceMic" aria-label="Falar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+    <button class="circle closebig" id="voiceClose" aria-label="Fechar modo voz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </footer>
+</section>
+
+<!-- ===================== CHAT ===================== -->
+<section class="screen" id="chat" hidden>
+  <div class="chead gut">
+    <button class="hbtn" id="chatMenu" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <div class="logo"><span class="word"><svg viewBox="0 0 40 22" fill="none" stroke="#141414" stroke-width="2.6" stroke-linecap="round"><path d="M20 2v5M10 5l3 4M30 5l-3 4M4 12l4 2M36 12l-4 2"/></svg>Destrava</span><span class="tag">SEU INGLÊS NA PRÁTICA</span></div>
+    <div class="right"><span class="online wait" id="conn"><i></i><span id="connTxt">Conectando</span></span><button class="me" id="chatMe" aria-label="Meu progresso"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8.5" r="4"/><path d="M4 20c1.2-4 4.4-6 8-6s6.8 2 8 6z"/></svg></button></div>
+  </div>
+  <div class="feed gut" id="feed"></div>
+  <div class="quick gut" id="quick">
+    <button class="q" data-c="Jarvis, começar aula"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M8 5v14l11-7z"/></svg><span>Aula</span></button>
+    <button class="q" data-c="Jarvis, revisão"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v4h4"/></svg><span>Revisão</span></button>
+    <button class="q" data-c="Jarvis, conversação"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg><span>Conversa</span></button>
+    <button class="q" data-c="Jarvis, traduz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h9M8.5 3v2M6 5c0 4 3 7 6 8M11 5c0 4-3 7-6 8M13 21l4-9 4 9M14.5 18h5"/></svg><span>Traduz</span></button>
+    <button class="q" data-c="Jarvis, mais devagar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M10 2h4"/></svg><span>Devagar</span></button>
+    <button class="q" data-c="Jarvis, meu progresso"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 20V12M12 20V5M18 20v-7"/></svg><span>Progresso</span></button>
+  </div>
+  <form class="inbar" id="chatForm">
+    <button type="button" class="plus" id="chatPlus" aria-label="Comandos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+    <textarea id="chatInput" rows="1" placeholder="Digite sua resposta…" aria-label="Sua resposta"></textarea>
+    <button type="button" class="mic" id="chatMic" aria-label="Falar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+    <button type="submit" class="send" id="chatSend" aria-label="Enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M21 3 3 10.5l7 2.5 2.5 7z"/><path d="M21 3 10 13"/></svg></button>
+  </form>
+  <nav class="tabs">
+    <button data-tab="chat" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3z"/></svg>Conversa</button>
+    <button data-tab="voice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12h2M7 8v8M11 5v14M15 9v6M19 11v2"/></svg>Modo voz</button>
+    <button data-tab="prog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 20V12M12 20V5M18 20v-7"/></svg>Progresso</button>
+    <button data-tab="more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg>Mais</button>
+  </nav>
+</section>
+
+<!-- ===================== SHEETS ===================== -->
+<div class="sheet" id="startSheet">
+  <div class="panel gut">
+    <h2>Bora destravar seu inglês.</h2>
+    <p>O Jarvis conversa com você em voz alta, corrige na hora e explica em português. A primeira conversa avalia seu nível.</p>
+    <div class="field"><label for="nameInput">Como o Jarvis deve te chamar?</label><input id="nameInput" autocomplete="given-name" placeholder="Seu nome"></div>
+    <div class="field"><label for="codeInput">Código de acesso <span style="font-weight:400;color:var(--muted)">(se você configurou um)</span></label><input id="codeInput" autocomplete="off" placeholder="Opcional"></div>
+    <button class="big" id="startBtn">Começar</button>
+  </div>
+</div>
+
+<div class="sheet" id="moreSheet" hidden>
+  <div class="panel gut">
+    <button class="closer" data-close>Fechar</button>
+    <h2>Ajustes</h2>
+    <div class="field">Professor
+      <div class="seg" id="moodSeg"><button type="button" data-p="educado">Educado</button><button type="button" data-p="impaciente">Impaciente</button></div>
+    </div>
+    <p class="note">Educado explica com calma e elogia cada tentativa. Impaciente dramatiza e se estressa de um jeito engraçado, sem ofender.</p>
+    <div class="field">Velocidade da voz
+      <div class="seg" id="speedSeg"><button type="button" data-r="0.75">Devagar</button><button type="button" data-r="0.9">Normal</button><button type="button" data-r="1.05">Rápido</button></div>
+    </div>
+    <div class="field"><label for="codeInput2">Código de acesso</label><input id="codeInput2" autocomplete="off" placeholder="Opcional"></div>
+    <label class="toggle" for="ccToggle">Legendas no modo voz<input type="checkbox" id="ccToggle"></label>
+    <h2 style="font-size:20px;margin-top:6px">Comandos</h2>
+    <button class="line" data-c="Jarvis, começar aula"><b>Começar aula</b><span>Aula do dia, com revisão e tema novo</span></button>
+    <button class="line" data-c="Jarvis, revisão"><b>Revisão</b><span>Volta nas expressões e nos erros anteriores</span></button>
+    <button class="line" data-c="Jarvis, conversação"><b>Conversação</b><span>Papo livre em inglês</span></button>
+    <button class="line" data-c="Jarvis, traduz"><b>Traduz</b><span>Traduz e explica a última fala</span></button>
+    <button class="line" data-c="Jarvis, mais devagar"><b>Mais devagar</b><span>Fala mais lenta e frases mais curtas</span></button>
+    <button class="line" data-c="Jarvis, estou dirigindo"><b>Estou dirigindo</b><span>Treino só em áudio: ouvir e repetir</span></button>
+  </div>
+</div>
+
+<div class="sheet" id="progSheet" hidden><div class="panel gut" id="progPanel"></div></div>
+<div class="tip" id="tip" hidden></div>
+
+<script>
+(() => {
+const $ = s => document.querySelector(s);
+const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+const LEVELS = ["A1","A2","B1","B2","C1"];
+const LABEL = { A1:"Iniciante", A2:"Básico", B1:"Intermediário", B2:"Conversação fluida", C1:"Avançado" };
+const STEP = 1500;
+
+/* ---------- state ---------- */
+const blank = () => ({ name:"", level:"A1", assessed:false, xp:0, startDate:null, lastDate:null, streak:0, totalMin:0, todayMin:0, sessions:0, turns:0, rate:0.9, persona:"educado", cc:false, vocab:[], mistakes:[] });
+let sampleReady = true;
+const api = {
+  async json(messages){
+    let code = ""; try { code = localStorage.getItem("destrava_code") || ""; } catch(e){}
+    const system = messages[0].content, msgs = messages.slice(1);
+    let res;
+    try { res = await fetch("/api/chat", { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ system, messages: msgs.length ? msgs : [{ role:"user", content:"ok" }], code }) }); }
+    catch(e){ throw { code:"network" }; }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw { code: data.error || "upstream_error" };
+    return data.reply;
+  }
+};
+let P = blank(), sample = api, docRef = null, store = "local";
+let turns = [], busy = false, lastAct = Date.now(), lastReply = null;
+
+const ymd = d => { const z = n => String(n).padStart(2,"0"); return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate()); };
+const today = () => ymd(new Date());
+const yesterday = () => { const d = new Date(); d.setDate(d.getDate()-1); return ymd(d); };
+const dayN = () => { if (!P.startDate) return 1; const a = new Date(P.startDate+"T12:00"), b = new Date(today()+"T12:00"); return Math.min(90, Math.max(1, Math.round((b-a)/864e5)+1)); };
+const hhmm = () => { const d = new Date(); return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0"); };
+function touchDay(){ const t = today(); if (!P.startDate) P.startDate = t; if (P.lastDate !== t){ P.streak = (P.lastDate === yesterday()) ? P.streak+1 : 1; P.todayMin = 0; P.sessions++; P.lastDate = t; } }
+function addMinutes(){ const n = Date.now(), m = Math.min((n-lastAct)/60000, 3); lastAct = n; P.todayMin = +(P.todayMin+m).toFixed(2); P.totalMin = +(P.totalMin+m).toFixed(2); }
+
+let saving = Promise.resolve(), dirty = false;
+function save(){
+  dirty = true;
+  saving = saving.then(async () => {
+    if (!dirty) return; dirty = false;
+    const data = JSON.parse(JSON.stringify(P));
+    if (docRef){ try { await docRef.set(data); return; } catch(e){} }
+    try { localStorage.setItem("destrava_profile", JSON.stringify(data)); } catch(e){}
+  });
+  renderLevel();
+}
+function loadLocal(){ try { const s = localStorage.getItem("destrava_profile"); if (s) P = Object.assign(blank(), JSON.parse(s)); } catch(e){} }
+
+/* ---------- orb ---------- */
+const cv = $("#orb"), cx = cv.getContext("2d");
+const O = { mode:"idle", amp:.15, pulse:0, t:0, dots:[] };
+for (let i = 0; i < 26; i++) O.dots.push({ a:Math.random()*6.28, r:Math.random()*.8, s:.2+Math.random()*.6, z:.6+Math.random()*1.4 });
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function setMode(m, label){ O.mode = m; const st = $("#status"); st.classList.remove("err"); if (label != null) st.textContent = label; }
+function showErr(t){ O.mode = "idle"; const st = $("#status"); st.textContent = t; st.classList.add("err"); }
+function kick(x){ O.pulse = Math.min(1, O.pulse + x); }
+function fit(){ const r = cv.getBoundingClientRect(), d = devicePixelRatio || 1; cv.width = Math.max(1, r.width*d); cv.height = Math.max(1, r.height*d); }
+addEventListener("resize", fit);
+try { new ResizeObserver(fit).observe(cv); } catch(e){}
+requestAnimationFrame(fit);
+function draw(){
+  if (!$("#voice").hidden){
+    if (cv.width < 2) fit();
+    const base = { idle:.14, think:.22, jarvis:.42, you:.34 }[O.mode];
+    if (O.mode === "jarvis" && Math.random() < .09) kick(.22);
+    O.pulse *= .93;
+    O.amp += (base + O.pulse*.55 - O.amp) * .1;
+    O.t += reduce ? .003 : (O.mode === "idle" ? .008 : .02);
+    const w = cv.width, h = cv.height, c = w/2, cyy = h/2, R = Math.min(w,h)*.34, U = Math.min(w,h);
+    cx.clearRect(0,0,w,h);
+    // halo rings
+    for (let i = 0; i < 5; i++){
+      const rr = R*(1.12 + i*.13) + O.amp*R*.18*(i+1)*(.6+.4*Math.sin(O.t*2+i));
+      cx.beginPath(); cx.arc(c,cyy,rr,0,6.283); cx.strokeStyle = `rgba(255,252,230,${.42 - i*.07})`; cx.lineWidth = U*.003; cx.stroke();
+    }
+    // body
+    cx.save(); cx.beginPath(); cx.arc(c,cyy,R,0,6.283); cx.clip();
+    const g = cx.createRadialGradient(c, cyy-R*.35, R*.1, c, cyy, R*1.05);
+    g.addColorStop(0,"#2B2106"); g.addColorStop(.55,"#6E5205"); g.addColorStop(1,"#E9B30C");
+    cx.fillStyle = g; cx.fillRect(c-R, cyy-R, 2*R, 2*R);
+    // ribbons
+    const bands = [ {f:1.2, ph:0, y:.02, th:.16, a:.75}, {f:1.6, ph:2, y:.08, th:.12, a:.55}, {f:2.1, ph:4, y:-.04, th:.09, a:.45}, {f:.9, ph:1, y:.16, th:.2, a:.35} ];
+    bands.forEach((B, k) => {
+      const yAt = (x, off) => cyy + R*B.y + Math.sin((x-c)/R*Math.PI*B.f + O.t*(1.4+k*.3) + B.ph) * R*(.12 + O.amp*.42) * (1 - Math.pow((x-c)/R, 2)*.4) + off;
+      cx.beginPath();
+      for (let x = c-R; x <= c+R; x += 4) cx.lineTo(x, yAt(x, -R*B.th/2));
+      for (let x = c+R; x >= c-R; x -= 4) cx.lineTo(x, yAt(x, R*B.th/2 * (0.6+0.4*Math.sin(O.t+x/R))));
+      cx.closePath();
+      const lg = cx.createLinearGradient(c-R, 0, c+R, 0);
+      lg.addColorStop(0, `rgba(255,214,40,${B.a*.4})`); lg.addColorStop(.5, `rgba(255,246,190,${B.a})`); lg.addColorStop(1, `rgba(255,214,40,${B.a*.4})`);
+      cx.fillStyle = lg; cx.fill();
+    });
+    // sparks
+    O.dots.forEach(p => {
+      p.a += .002 * p.s * (1 + O.amp*3);
+      const x = c + Math.cos(p.a)*p.r*R, y = cyy + Math.sin(p.a*1.3)*p.r*R*.8;
+      cx.beginPath(); cx.arc(x, y, U*.0025*p.z, 0, 6.283); cx.fillStyle = `rgba(255,230,120,${.5+.4*Math.sin(O.t*3+p.a)})`; cx.fill();
+    });
+    cx.restore();
+    // rim glow
+    cx.save(); cx.beginPath(); cx.arc(c,cyy,R,0,6.283);
+    cx.shadowColor = "rgba(255,250,210,.95)"; cx.shadowBlur = U*.05*(1+O.amp);
+    cx.strokeStyle = O.mode === "you" ? "#FFFFFF" : "#FFF7CF"; cx.lineWidth = U*.008; cx.stroke(); cx.restore();
+  }
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+
+/* ---------- voice out ---------- */
+let voices = [];
+const loadVoices = () => { try { voices = speechSynthesis.getVoices() || []; } catch(e){ voices = []; } };
+if ("speechSynthesis" in window){ loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+function pickVoice(lang){
+  const n = v => (v.lang||"").replace("_","-").toLowerCase();
+  if (lang === "pt-BR") return voices.find(v => n(v) === "pt-br") || null;   // never European Portuguese
+  const en = voices.filter(v => n(v).startsWith("en-us"));
+  return en.find(v => /samantha|google us|aria|jenny|natural/i.test(v.name)) || en[0] || voices.find(v => n(v).startsWith("en")) || null;
+}
+let seq = 0;
+function speak(text, lang, rate){
+  return new Promise(res => {
+    if (!text || !("speechSynthesis" in window)) return res();
+    const u = new SpeechSynthesisUtterance(text); u.lang = lang; const v = pickVoice(lang); if (v) u.voice = v; u.rate = rate ?? P.rate;
+    const guard = setTimeout(done, 2500 + text.length*110);
+    function done(){ clearTimeout(guard); res(); }
+    u.onstart = () => { setMode("jarvis","Jarvis falando"); kick(.5); };
+    u.onboundary = () => kick(.45);
+    u.onend = u.onerror = done;
+    try { speechSynthesis.speak(u); } catch(e){ done(); }
+  });
+}
+function stopSpeech(){ seq++; try { speechSynthesis.cancel(); } catch(e){} }
+async function speakReply(r){
+  stopSpeech(); const my = seq;
+  const parts = [];
+  if (r.pt) parts.push([r.pt,"pt-BR"]);
+  if (r.correction){ if (r.correction.why) parts.push([r.correction.why,"pt-BR"]); if (r.correction.right) parts.push([r.correction.right,"en-US"]); }
+  if (r.en) parts.push([r.en,"en-US"]);
+  for (const [t,l] of parts){ if (my !== seq) return; await speak(t,l); }
+  if (my === seq) setMode("idle","Sua vez");
+}
+
+/* ---------- chat feed ---------- */
+const feed = $("#feed");
+const down = () => requestAnimationFrame(() => feed.scrollTop = feed.scrollHeight);
+const SUN = '<svg viewBox="0 0 28 28" fill="none" stroke="#141414" stroke-width="2.4" stroke-linecap="round"><path d="M14 3v3M6 7l2 2M22 7l-2 2M3 14h2M23 14h2"/><path d="M7 19a7 7 0 0 1 14 0z" fill="#141414"/><path d="M4 22h20"/></svg>';
+const PLAY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/></svg>';
+function userMsg(text){
+  const m = el("div","m u"), col = el("div","col"); col.append(el("div","b",text), el("div","time",hhmm()+" ✓✓")); m.append(col); feed.append(m); down();
+}
+function jarvisMsg(){
+  const m = el("div","m"), av = el("div","av"); av.innerHTML = SUN;
+  const col = el("div","col"), b = el("div","b"); b.append(el("div","typing","digitando…"));
+  col.append(b); m.append(av, col); feed.append(m); down(); return { b, col };
+}
+function fillJarvis(h, r){
+  h.b.textContent = "";
+  if (r.correction && r.correction.right){ const f = el("div","fix"); f.append(el("b",null,"Correção")); if (r.correction.why) f.append(el("div",null,r.correction.why)); f.append(el("div","ok",r.correction.right)); h.b.append(f); }
+  if (r.en) h.b.append(el("div","en",r.en));
+  if (r.pt) h.b.append(el("div","pt",r.pt));
+  if (Array.isArray(r.vocab) && r.vocab.length){ const v = el("div","voc"); r.vocab.forEach(x => x && x.en && v.append(el("span",null,x.en+" · "+(x.pt||"")))); h.b.append(v); }
+  if (r.level){ const v = el("div","voc"); const s = el("span",null,"Nível estimado: "); s.append(el("span","hl",r.level)); v.append(s); h.b.append(v); }
+  const t = el("div","time",hhmm()+" "); const pb = el("button","play"); pb.type = "button"; pb.innerHTML = PLAY; pb.append("Ouvir"); pb.onclick = () => speakReply(r); t.append(pb); h.col.append(t);
+  down();
+}
+function greet(){
+  const h = jarvisMsg();
+  fillJarvis(h, { en: P.name ? `Hey, ${P.name}! Ready to practice?` : "Hey! Ready to practice?", pt: "Sou o Jarvis, seu professor de inglês. Toque em Começar aula ou mande uma mensagem." });
+}
+
+/* ---------- tutor ---------- */
+function rules(){
+  const vocab = P.vocab.slice(-25).map(v => v.en).join("; ") || "nenhum ainda";
+  const mist = P.mistakes.slice().sort((a,b)=>b.count-a.count).slice(0,8).map(m => m.label+" ("+m.count+"x)").join("; ") || "nenhum registrado";
+  const lvl = P.assessed ? P.level : "ainda não avaliado. Faça a avaliação com uma conversa simples, uma pergunta por vez, aumentando a dificuldade aos poucos. Depois de 5 a 6 respostas, diga em português o nível CEFR estimado e preencha o campo level";
+  const persona = P.persona === "impaciente"
+    ? `PROFESSOR IMPACIENTE (modo comédia). Exigente e com um estresse engraçado, como um tio brincalhão sem paciência: suspira, dramatiza, usa bordões como "Ô amigão, vamos lá...", "Já te expliquei isso, hein!", "Respira... vamos de novo", "Assim você me mata do coração". Exagere quando o aluno repete um erro ou demora, e comemore exagerado quando ele acerta ("Aleluia! Finalmente!"). NUNCA ofenda, humilhe, xingue nem fale da inteligência ou aparência dele: a graça é o seu drama, não diminuir o aluno. Continue ensinando certo e com clareza. Os bordões vão no campo "pt" ou no "why".`
+    : `PROFESSOR EDUCADO. Calmo, gentil e encorajador. Explique com paciência, repita quantas vezes for preciso, valorize cada esforço ("Boa tentativa!", "Muito bem!") e nunca demonstre pressa.`;
+  return `Você é Jarvis, professor particular de inglês no app Destrava. Suas falas são lidas em voz alta: escreva como se fala, sem listas, markdown ou emojis.
+Aluno: ${P.name || "(pergunte o nome)"}, brasileiro. Meta: conversação funcional em 90 dias, cerca de 30 min por dia. Hoje é o dia ${dayN()} de 90.
+Contextos para praticar: família e filhos pequenos, viagens internacionais, restaurantes, empreendedorismo e negociações.
+Nível atual: ${lvl}.
+Vocabulário já ensinado (revise às vezes): ${vocab}.
+Erros recorrentes (trabalhe neles): ${mist}.
+Personalidade: ${persona}
+Regras:
+- UMA pergunta por vez. Falas curtas: 1 a 3 frases em inglês, no nível do aluno. Comece devagar e aumente a dificuldade conforme ele evolui.
+- Quando o aluno errar: explique em UMA frase curta em português, dê a frase correta em inglês e peça para ele repetir.
+- Ensine expressões naturais que nativos usam. Nada de aulas longas de gramática.
+- Paciente, divertido, exigente e objetivo.
+Comandos do aluno: "começar aula" (revisão rápida + tema novo), "revisão", "conversação" (papo livre), "traduz" (traduza e explique em português sua última fala), "mais devagar" (frases mais curtas e simples), "meu progresso" (avalie a evolução com os dados acima, em português, de forma concreta).
+Responda SOMENTE com um objeto JSON:
+{"pt": string ou null (fala curta em português, só quando necessário),
+ "correction": null ou {"right": "frase correta em inglês", "why": "explicação curta em português"},
+ "en": "sua fala em inglês, terminando com no máximo uma pergunta",
+ "vocab": [{"en": "expressão nova ensinada", "pt": "tradução"}] (0 a 3),
+ "level": "A1"|"A2"|"B1"|"B2"|"C1" ou null (só quando avaliar),
+ "mistake": string ou null (rótulo curto em português do tipo de erro)}`;
+}
+const errCopy = c => ({
+  bad_code:"Código de acesso incorreto. Abra os Ajustes e confira o código.",
+  no_key:"Chave da IA ausente ou inválida. Confira GEMINI_API_KEY na Vercel.",
+  rate_limited:"Limite de mensagens atingido. Espere um pouco ou volte amanhã (no plano grátis o limite é diário).",
+  network:"Sem internet. Confira a conexão e tente de novo.",
+  invalid_json:"O Jarvis se enrolou. Mande de novo.",
+}[c] || "Não consegui falar com o Jarvis agora. Tente de novo.");
+
+async function send(text){
+  text = (text||"").trim(); if (!text || busy) return;
+  closeSheets(); hideTip();
+  if (/estou dirigindo/i.test(text)){ showScreen("voice"); startDrive(); return; }
+  if (/mais devagar/i.test(text)) setRate(Math.max(.65, +(P.rate-.1).toFixed(2)));
+  stopSpeech(); touchDay(); addMinutes();
+  const isCmd = /^jarvis,/i.test(text);
+  userMsg(text.replace(/^jarvis,\s*/i, "").replace(/^./, c => c.toUpperCase()).replace(/\. É minha primeira vez.*$/,""));
+  const h = jarvisMsg();
+  if (!sample){ const t = sampleReady ? "O Jarvis não está disponível neste aparelho. Teste abrindo o link pelo claude.ai no navegador." : "Ainda conectando o Jarvis. Espere uns segundos e mande de novo."; h.b.textContent = t; showErr(t); return; }
+  turns.push({ role:"user", content:text });
+  if (turns.length > 24) turns = turns.slice(-24);
+  while (turns.length && turns[0].role !== "user") turns.shift();
+  busy = true; $("#chatSend").disabled = true; setMode("think","Pensando…"); $("#cc").textContent = "";
+  try {
+    const r = await sample.json([{ role:"user", content:rules() }, ...turns]);
+    if (!r || typeof r !== "object") throw { code:"invalid_json" };
+    lastReply = r; fillJarvis(h, r);
+    $("#cc").textContent = [r.correction && r.correction.right, r.en].filter(Boolean).join(" · ");
+    turns.push({ role:"assistant", content:[r.pt, r.correction && ("Correção: "+r.correction.right), r.en].filter(Boolean).join(" ") || "ok" });
+    const up = learn(r, isCmd); save();
+    if (up) await speak("Parabéns! Você subiu para o nível " + P.level + ".", "pt-BR", 1);
+    speakReply(r).then(() => { if (live && !drv) listen(); });
+  } catch(e){
+    turns.pop(); const t = errCopy(e && e.code); h.b.textContent = t; showErr(t); setConn(false); if (live) stopLive();
+  } finally { busy = false; $("#chatSend").disabled = false; }
+}
+function gainXp(n){
+  P.xp += n; const pop = $("#xpPop"); pop.textContent = "+"+n+" XP"; pop.classList.add("show"); setTimeout(() => pop.classList.remove("show"), 1400);
+  let up = false; while (P.xp >= STEP && LEVELS.indexOf(P.level) < LEVELS.length-1){ P.xp -= STEP; P.level = LEVELS[LEVELS.indexOf(P.level)+1]; up = true; } return up;
+}
+function learn(r, isCmd){
+  let up = false;
+  if (r.level && LEVELS.includes(r.level) && !P.assessed){ P.level = r.level; P.assessed = true; P.xp = 0; }
+  else if (r.level && LEVELS.includes(r.level) && LEVELS.indexOf(r.level) > LEVELS.indexOf(P.level)){ P.level = r.level; P.xp = 0; up = true; }
+  if (Array.isArray(r.vocab)) r.vocab.forEach(v => { if (!v || !v.en) return; const k = String(v.en).toLowerCase().trim(); if (!P.vocab.some(x => x.en.toLowerCase() === k)) P.vocab.push({ en:String(v.en), pt:String(v.pt||""), d:today() }); });
+  if (P.vocab.length > 150) P.vocab = P.vocab.slice(-150);
+  if (r.mistake){ const k = String(r.mistake).toLowerCase().trim(); const m = P.mistakes.find(x => x.label.toLowerCase() === k); if (m){ m.count++; m.d = today(); } else P.mistakes.push({ label:String(r.mistake), count:1, d:today() }); if (P.mistakes.length > 30) P.mistakes = P.mistakes.sort((a,b)=>b.count-a.count).slice(0,30); }
+  if (!isCmd){ P.turns++; if (gainXp(r.correction ? 10 : 20)) up = true; }
+  return up;
+}
+
+/* ---------- level ---------- */
+function renderLevel(){
+  const i = Math.max(0, LEVELS.indexOf(P.level)), last = i === LEVELS.length-1;
+  $("#lvlLab").textContent = P.level + " · " + LABEL[P.level].toUpperCase() + (P.assessed ? "" : " · EM AVALIAÇÃO");
+  $("#lvlFill").style.width = (last ? 100 : ((i + Math.min(P.xp,STEP)/STEP)/LEVELS.length)*100) + "%";
+}
+
+/* ---------- inputs ---------- */
+const chatIn = $("#chatInput");
+chatIn.addEventListener("input", () => { chatIn.style.height = "auto"; chatIn.style.height = Math.min(chatIn.scrollHeight,96)+"px"; });
+chatIn.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); $("#chatForm").requestSubmit(); } });
+$("#chatForm").addEventListener("submit", e => { e.preventDefault(); const t = chatIn.value; chatIn.value = ""; chatIn.style.height = "auto"; send(t); });
+const vIn = $("#voiceInput");
+let typingT = null;
+vIn.addEventListener("input", () => { if (O.mode !== "jarvis" && O.mode !== "think"){ setMode("you","Você falando"); kick(.4); clearTimeout(typingT); typingT = setTimeout(() => { if (O.mode === "you") setMode("idle","Sua vez"); }, 900); } });
+$("#voiceForm").addEventListener("submit", e => { e.preventDefault(); const t = vIn.value; vIn.value = ""; vIn.blur(); send(t); });
+
+/* ---------- microphone: continuous hands-free conversation ---------- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null, live = false, misses = 0;
+function showTip(t){ const e = $("#tip"); e.textContent = t; e.hidden = false; clearTimeout(showTip.t); showTip.t = setTimeout(hideTip, 6000); }
+function hideTip(){ $("#tip").hidden = true; }
+function setConn(ok){ const c = $("#conn"); c.className = "online" + (ok ? "" : " off"); $("#connTxt").textContent = ok ? "Online" : "Offline"; }
+function listen(){
+  if (!SR){ showTip("Este navegador não reconhece voz. Use o Chrome (Android) ou o Safari (iPhone)."); stopLive(); return; }
+  if (rec || busy) return;
+  stopSpeech();
+  const btn = $("#voiceMic");
+  rec = new SR(); rec.lang = "en-US"; rec.interimResults = true; rec.continuous = false; rec.maxAlternatives = 1;
+  let text = "";
+  const dog = setTimeout(() => { if (rec && !text) try { rec.abort(); } catch(e){} }, 8000);   // some phones never end a silent session
+  btn.classList.add("on"); $("#chatMic").classList.add("on"); setMode("you","Ouvindo você…");
+  rec.onresult = ev => { text = Array.from(ev.results).map(x => x[0].transcript).join(" "); kick(.55); if (!$("#cc").hidden) $("#cc").textContent = text; };
+  rec.onerror = ev => {
+    if (ev.error === "not-allowed" || ev.error === "service-not-allowed"){ stopLive(); showTip("Libere o microfone para o Destrava nas permissões do navegador."); }
+  };
+  rec.onend = () => {
+    clearTimeout(dog); rec = null; btn.classList.remove("on"); $("#chatMic").classList.remove("on");
+    const t = text.trim();
+    if (t){ misses = 0; send(t); return; }
+    if (live && ++misses < 4){ setTimeout(listen, 250); return; }
+    if (live){ stopLive(); showTip("Não ouvi nada. Toque no microfone quando quiser continuar."); }
+    else setMode("idle","Sua vez");
+  };
+  try { rec.start(); } catch(e){ rec = null; btn.classList.remove("on"); }
+}
+function startLive(){ live = true; misses = 0; $("#voiceMic").setAttribute("aria-label","Pausar conversa"); listen(); }
+function stopLive(){ live = false; if (rec){ try { rec.abort(); } catch(e){} rec = null; } $("#voiceMic").classList.remove("on"); $("#chatMic").classList.remove("on"); $("#voiceMic").setAttribute("aria-label","Falar"); setMode("idle","Toque no microfone para falar"); }
+$("#voiceMic").onclick = () => { if (busy) return; if (live) stopLive(); else startLive(); };
+$("#chatMic").onclick = () => { if (busy) return; if (rec){ rec.stop(); return; } live = false; listen(); };
+
+/* ---------- screens & sheets ---------- */
+function showScreen(s){
+  $("#voice").hidden = s !== "voice"; $("#chat").hidden = s !== "chat";
+  document.querySelectorAll(".tabs button").forEach(b => { if (b.dataset.tab === s) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current"); });
+  if (s === "voice") requestAnimationFrame(fit); else down();
+}
+function openSheet(id){ closeSheets(); $(id).hidden = false; }
+function closeSheets(){ ["#moreSheet","#progSheet"].forEach(s => $(s).hidden = true); }
+document.querySelectorAll(".sheet").forEach(s => s.addEventListener("click", e => { if (e.target === s && s.id !== "startSheet") s.hidden = true; }));
+document.addEventListener("click", e => { if (e.target.closest("[data-close]")) closeSheets(); });
+document.querySelectorAll("[data-c]").forEach(b => b.onclick = () => send(b.dataset.c));
+$("#toChat").onclick = $("#voiceClose").onclick = () => { stopSpeech(); setMode("idle","Sua vez"); showScreen("chat"); };
+$("#voiceSettings").onclick = $("#voicePlus").onclick = $("#chatMenu").onclick = $("#chatPlus").onclick = () => openSheet("#moreSheet");
+$("#lvlBtn").onclick = $("#chatMe").onclick = () => { renderProg(); openSheet("#progSheet"); };
+document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
+  const t = b.dataset.tab;
+  if (t === "prog"){ renderProg(); openSheet("#progSheet"); }
+  else if (t === "more") openSheet("#moreSheet");
+  else showScreen(t);
+});
+
+function setRate(r){ P.rate = r; document.querySelectorAll("#speedSeg button").forEach(b => b.setAttribute("aria-pressed", String(Math.abs(+b.dataset.r - r) < .08))); }
+document.querySelectorAll("#speedSeg button").forEach(b => b.onclick = () => { setRate(+b.dataset.r); save(); speak("Hi! This is how fast I'll talk.","en-US").then(() => setMode("idle","Sua vez")); });
+function setPersona(p){ P.persona = p; document.querySelectorAll("#moodSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.p === p))); }
+document.querySelectorAll("#moodSeg button").forEach(b => b.onclick = () => {
+  if (P.persona === b.dataset.p) return; setPersona(b.dataset.p); save(); stopSpeech();
+  speak(b.dataset.p === "impaciente" ? "Ah, agora sim. Vamos ver se você aguenta." : "Pode ficar tranquilo, vamos no seu ritmo.", "pt-BR", 1).then(() => setMode("idle","Sua vez"));
+});
+function setCC(v){ P.cc = v; $("#cc").hidden = !v; $("#ccToggle").checked = v; }
+$("#codeInput2").onchange = e => { try { localStorage.setItem("destrava_code", e.target.value.trim()); } catch(x){} };
+$("#ccToggle").onchange = e => { setCC(e.target.checked); save(); };
+
+$("#startBtn").onclick = () => {
+  P.name = $("#nameInput").value.trim() || P.name; save();
+  try { localStorage.setItem("destrava_code", $("#codeInput").value.trim()); } catch(e){}
+  $("#startSheet").hidden = true;
+  greet();
+  speak(P.name ? "Fala, "+P.name+"! Bora destravar esse inglês." : "Fala! Bora destravar esse inglês.", "pt-BR", 1).then(() => setMode("idle","Toque no microfone para falar"));
+};
+
+/* ---------- progress ---------- */
+function renderProg(){
+  const p = $("#progPanel"); p.textContent = "";
+  const c = el("button","closer","Fechar"); c.dataset.close = ""; p.append(c);
+  p.append(el("h2",null,"Seu progresso"));
+  p.append(el("p",null,"Dia "+dayN()+" de 90"));
+  const i = Math.max(0, LEVELS.indexOf(P.level)), last = i === LEVELS.length-1;
+  const L = el("div","lvlbig"), top = el("div","top"); top.append(el("b",null,P.level), el("span",null,last ? "Nível máximo" : Math.min(P.xp,STEP)+" / "+STEP+" XP"));
+  const tr = el("div","track"), fi = el("i"); fi.style.width = (last ? 100 : ((i + Math.min(P.xp,STEP)/STEP)/LEVELS.length)*100) + "%"; tr.append(fi);
+  const tk = el("div","ticks"); LEVELS.forEach((l,k) => tk.append(el("span", k <= i ? "on" : "", l)));
+  L.append(top, tr, tk, el("div","note", LABEL[P.level] + (P.assessed ? "" : " · a primeira conversa define seu nível")));
+  p.append(L);
+  const g = el("div","grid3");
+  [[P.streak,"Dias seguidos"],[Math.round(P.todayMin)+"/30","Min. hoje"],[P.vocab.length,"Expressões"]].forEach(([v,l]) => { const s = el("div","stat"); s.append(el("div","v",String(v)), el("div","l",l)); g.append(s); });
+  p.append(g);
+  p.append(el("h3",null,"Pontos para treinar"));
+  const ml = el("div","list"), ms = P.mistakes.slice().sort((a,b)=>b.count-a.count).slice(0,6);
+  if (!ms.length) ml.append(el("div","empty","Os erros que o Jarvis corrigir aparecem aqui, com quantas vezes aconteceram."));
+  ms.forEach(m => { const r = el("div","row"); r.append(el("div",null,m.label), el("div","count",m.count+"x")); ml.append(r); });
+  p.append(ml);
+  p.append(el("h3",null,"Expressões recentes"));
+  const vl = el("div","list"), vs = P.vocab.slice(-10).reverse();
+  if (!vs.length) vl.append(el("div","empty","Cada expressão nova da conversa entra aqui para revisar depois."));
+  vs.forEach(x => { const r = el("div","row"); r.append(el("b",null,x.en), el("span",null,x.pt)); vl.append(r); });
+  p.append(vl);
+  const ask = el("button","big","Pedir avaliação ao Jarvis"); ask.onclick = () => { showScreen("chat"); send("Jarvis, meu progresso"); }; p.append(ask);
+  p.append(el("p","note", "Salvo neste aparelho."));
+}
+
+/* ---------- driving ---------- */
+let drv = null, wake = null;
+const wait = (ms, sig) => new Promise(res => { const t = setTimeout(res, ms); sig.addEventListener("abort", () => { clearTimeout(t); res(); }, { once:true }); });
+async function startDrive(){
+  if (drv) return;
+  drv = new AbortController(); const sig = drv.signal;
+  try { wake = await navigator.wakeLock?.request("screen"); } catch(e){ wake = null; }
+  touchDay(); lastAct = Date.now();
+  showTip("Modo direção ligado. Toque no X para parar.");
+  speak("Beleza, modo direção. Preparando seu treino.", "pt-BR", 1);
+  setMode("think","Preparando o treino");
+  let items = null;
+  if (sample){
+    try {
+      const review = P.vocab.slice(-12).map(v => v.en).join("; ") || "nenhum", mist = P.mistakes.slice(0,5).map(m => m.label).join("; ") || "nenhum";
+      items = await sample.json([{ role:"user", content:`Crie 8 itens de treino de fala, só em áudio, para um aluno brasileiro de inglês nível ${P.level}. Ele vai ouvir enquanto dirige: frases curtas (até 8 palavras), úteis e naturais. Contextos: família com filhos pequenos, viagens, restaurantes, negócios. Inclua 3 itens revisando: ${review}. Considere estes erros: ${mist}. Responda SOMENTE com um array JSON: [{"pt":"frase em português do Brasil","en":"tradução natural em inglês americano"}]` }, { role:"user", content:"Gere os itens." }]);
+    } catch(e){ items = null; }
+  }
+  if (!Array.isArray(items) || !items.length) items = [
+    {pt:"Uma mesa para quatro, por favor.", en:"A table for four, please."}, {pt:"Pode trazer a conta?", en:"Could we get the check?"},
+    {pt:"Meus filhos estão com fome.", en:"My kids are hungry."}, {pt:"Onde fica o portão de embarque?", en:"Where is the boarding gate?"},
+    {pt:"Esse é o nosso melhor preço.", en:"That's our best price."}, {pt:"Fechado, temos um acordo.", en:"Okay, we have a deal."} ];
+  items = items.filter(i => i && i.pt && i.en).slice(0,10);
+  if (!sig.aborted) await speak("Eu falo em português, depois em inglês. Repita em voz alta depois de mim.", "pt-BR", 1);
+  for (let i = 0; i < items.length && !sig.aborted; i++){
+    const it = items[i]; $("#cc").textContent = it.en;
+    await speak("Como se diz: " + it.pt, "pt-BR", 1); if (sig.aborted) break;
+    await wait(1600, sig); if (sig.aborted) break;
+    const gap = Math.max(2600, it.en.split(" ").length*650);
+    await speak(it.en, "en-US"); setMode("you","Sua vez de repetir"); await wait(gap, sig); if (sig.aborted) break;
+    await speak(it.en, "en-US"); setMode("you","Repita mais uma vez"); await wait(gap, sig); if (sig.aborted) break;
+    if (!P.vocab.some(x => x.en.toLowerCase() === it.en.toLowerCase())) P.vocab.push({ en:it.en, pt:it.pt, d:today() });
+    gainXp(5);
+  }
+  if (!sig.aborted) await speak("Mandou bem! Treino concluído.", "pt-BR", 1);
+  endDrive();
+}
+function endDrive(){
+  if (!drv) return; drv.abort(); drv = null; stopSpeech(); setMode("idle","Sua vez");
+  try { wake && wake.release(); } catch(e){} wake = null;
+  addMinutes(); if (P.vocab.length > 150) P.vocab = P.vocab.slice(-150); save();
+}
+$("#voiceClose").addEventListener("click", endDrive, true);
+
+/* ---------- boot ---------- */
+function apply(){ $("#nameInput").value = P.name || ""; setRate(P.rate || .9); setPersona(P.persona || "educado"); setCC(!!P.cc); renderLevel(); }
+loadLocal(); apply(); setConn(true);
+try { $("#codeInput").value = $("#codeInput2").value = localStorage.getItem("destrava_code") || ""; } catch(e){}
+})();
+</script>
+
+</body>
+</html>

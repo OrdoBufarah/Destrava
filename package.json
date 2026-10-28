@@ -1,0 +1,7 @@
+{
+  "name": "destrava",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Destrava — professor de inglês por voz com IA",
+  "engines": { "node": ">=18" }
+}
