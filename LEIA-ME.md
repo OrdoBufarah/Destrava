@@ -53,8 +53,9 @@ Variáveis opcionais na Vercel: `DESTRAVA_VOICE` (voz padrão, ex.: `Puck`) e `D
 
 Acesse pelo botão **Destrava Kids** na tela inicial ou em Ajustes, ou direto em `seu-link.vercel.app/kids.html`.
 - Mapa de fases: cada fase tem 5 palavras e 8 desafios (ouvir e tocar a figura, e falar a palavra).
-- Estrelas por fase, troféu a cada mundo, confete e o mascote Solzinho incentivando o tempo todo.
-- A voz fica guardada no aparelho depois da primeira vez, então repetir fases não gasta o limite grátis.
+- Estrelas por fase, troféu a cada mundo, álbum de figurinhas, confete e a mascote Sunny incentivando o tempo todo.
+- Saudação toda vez que abre (bom dia/boa tarde/boa noite + nome) e música de fundo de caixinha ("Brilha, brilha, estrelinha", domínio público), com botão 🎵 para desligar.
+- Voz feminina natural (Zephyr), igual em todos os aparelhos. Cada frase é gerada uma única vez e fica guardada na Vercel e no aparelho, então quase não gasta o limite grátis.
 
 ## Ajustes úteis
 

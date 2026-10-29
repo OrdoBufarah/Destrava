@@ -115,6 +115,26 @@ button:focus-visible{outline:4px solid var(--violet);outline-offset:3px}
 .panel input{width:100%;max-width:320px;border:3px solid var(--sun-deep);border-radius:18px;padding:14px;font:600 22px var(--font);text-align:center;color:var(--ink);background:#fff}
 .note{font-size:14px;color:var(--muted)}
 
+/* mascot bounces while Sunny talks */
+@keyframes talkb{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(-6px) rotate(3deg)}}
+body.talking .mascot{animation:talkb .28s ease-in-out infinite alternate}
+.iconbtn{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.6);display:grid;place-items:center;font-size:22px}
+.topleft{display:flex;gap:6px}
+@media (max-width:430px){.top{gap:6px}.top .back,.top .iconbtn{width:40px;height:40px;font-size:19px}.brand b{font-size:21px}.brand span{font-size:11px}.pills{gap:4px}.pill{padding:5px 8px;font-size:15px}}
+/* splash */
+#splash{position:fixed;inset:0;z-index:45;background:radial-gradient(circle at 50% 38%,#FFF6CF 0,#FFE680 45%,#FFC93C 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center}
+#splash .mascot{width:170px;height:170px;animation:talkb .9s ease-in-out infinite alternate}
+#splash h1{margin:0;font-size:44px;font-weight:700;letter-spacing:-.01em}
+#splash h1 span{color:var(--violet)}
+#splash p{margin:0;color:var(--muted);font-size:19px}
+.playbig{width:120px;height:120px;border-radius:50%;background:var(--good);color:#fff;display:grid;place-items:center;box-shadow:0 9px 0 var(--good-deep);animation:ring 1.4s ease-in-out infinite}
+.playbig svg{width:56px;height:56px;margin-left:8px}
+/* album */
+.album{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;width:100%}
+.stk{aspect-ratio:1;max-width:100%;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:34px;background:var(--white);box-shadow:0 4px 0 rgba(42,33,65,.1);transform:rotate(var(--r,0deg))}
+.stk small{font-size:11px;font-weight:600;color:var(--muted);text-align:center;line-height:1.1;padding:0 2px}
+.stk.no{background:#EFEADB;color:#B9B1A0;font-size:28px;box-shadow:none}
+.closex{align-self:flex-end;background:var(--white);border-radius:999px;padding:6px 16px;font-weight:700;box-shadow:0 3px 0 rgba(0,0,0,.1)}
 canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -137,12 +157,15 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
 <!-- ===== MAP ===== -->
 <section class="screen" id="home">
   <div class="top gut">
-    <a class="back" href="/" aria-label="Voltar para o Destrava"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <div class="topleft">
+      <a class="back" href="/" aria-label="Voltar para o Destrava"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></a>
+      <button class="iconbtn" id="musicBtn" aria-label="Música de fundo">🎵</button>
+    </div>
     <div class="brand"><b>Destrava</b><span>KIDS</span></div>
-    <div class="pills"><span class="pill"><i>⭐</i><span id="starCount">0</span></span><span class="pill"><i>🔥</i><span id="streak">0</span></span></div>
+    <div class="pills"><button class="pill" id="albumBtn" aria-label="Álbum de figurinhas"><i>📒</i></button><span class="pill"><i>⭐</i><span id="starCount">0</span></span><span class="pill"><i>🔥</i><span id="streak">0</span></span></div>
   </div>
   <div class="map gut" id="map">
-    <div class="hello"><svg class="mascot"><use href="#sunny"/></svg><p id="helloTxt">Oi! Eu sou o <b>Solzinho</b>. Bora aprender inglês brincando?</p></div>
+    <div class="hello"><svg class="mascot"><use href="#sunny"/></svg><p id="helloTxt">Oi! Eu sou a <b>Sunny</b>. Bora aprender inglês brincando?</p></div>
     <div class="path" id="path"></div>
   </div>
 </section>
@@ -174,6 +197,22 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
     <input id="kidName" maxlength="20" autocomplete="off" placeholder="Seu nome" aria-label="Nome da criança">
     <button class="cta" id="nameGo">Vamos lá!</button>
     <p class="note">Para os pais: o progresso fica salvo só neste aparelho.</p>
+  </div>
+</div>
+
+<div id="splash">
+  <svg class="mascot"><use href="#sunny"/></svg>
+  <h1>Destrava <span>Kids</span></h1>
+  <p id="splashTxt">Toque para começar!</p>
+  <button class="playbig" id="splashGo" aria-label="Começar"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg></button>
+</div>
+
+<div class="sheet" id="albumSheet" hidden>
+  <div class="panel gut">
+    <button class="closex" id="albumClose">Fechar</button>
+    <h2>Meu álbum 📒</h2>
+    <p id="albumTxt">Cada fase completa ganha uma figurinha!</p>
+    <div class="album" id="album"></div>
   </div>
 </div>
 
@@ -220,7 +259,7 @@ const PRAISE = ["Muito bem!","Uau, mandou bem!","Isso aí!","Que demais!","Perfe
 const RETRY  = ["Quase! Tenta de novo.","Opa, foi por pouco! Mais uma vez.","Você consegue! Tenta outra."];
 
 /* ---------- state ---------- */
-const blank = () => ({ name:"", unlocked:1, stars:{}, streak:0, lastDay:null });
+const blank = () => ({ name:"", unlocked:1, stars:{}, streak:0, lastDay:null, music:true });
 let K = blank();
 try { const s = localStorage.getItem("destrava_kids"); if (s) K = Object.assign(blank(), JSON.parse(s)); } catch(e){}
 const save = () => { try { localStorage.setItem("destrava_kids", JSON.stringify(K)); } catch(e){} renderTop(); };
@@ -240,30 +279,31 @@ function unlockAudio(){
   } catch(e){}
 }
 ["pointerdown","touchend","keydown"].forEach(ev => document.addEventListener(ev, unlockAudio, { passive:true }));
-const STYLE = "Você é o Solzinho, um mascote alegre que ensina inglês para crianças brasileiras pequenas. Fale com muita animação, carinho e sorriso na voz, devagar e bem claro. As partes em português têm sotaque brasileiro de Brasília, nunca português de Portugal. As palavras em inglês têm pronúncia americana nativa, bem caprichada. Leia em voz alta exatamente este texto:";
-const VOICE = "Puck";
+const VOICE = "Zephyr";   // natural female voice, the same on every device
 async function getVoice(text){
-  const key = VOICE + "|" + text;
-  if (memCache.has(key)) return memCache.get(key);
+  const url = "/api/tts?s=kids&v=" + VOICE + "&t=" + encodeURIComponent(text);
+  if (memCache.has(url)) return memCache.get(url);
   let bytes = null, cache = null;
-  try { cache = await caches.open("destrava-kids-voz-v1"); const hit = await cache.match("/voz/" + encodeURIComponent(key)); if (hit) bytes = await hit.arrayBuffer(); } catch(e){}
+  try { cache = await caches.open("destrava-kids-voz-v2"); const hit = await cache.match(url); if (hit) bytes = await hit.arrayBuffer(); } catch(e){}
   if (!bytes){
-    let code = ""; try { code = localStorage.getItem("destrava_code") || ""; } catch(e){}
-    const r = await fetch("/api/tts", { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ text, voice:VOICE, style:STYLE, code }) });
+    const r = await fetch(url);
     if (!r.ok){ const d = await r.json().catch(() => ({})); throw { code: d.error || "tts_error", status:r.status }; }
     bytes = await r.arrayBuffer();
-    try { cache && await cache.put("/voz/" + encodeURIComponent(key), new Response(bytes.slice(0), { headers:{ "Content-Type":"audio/wav" } })); } catch(e){}
+    try { cache && await cache.put(url, new Response(bytes.slice(0), { headers:{ "Content-Type":"audio/wav" } })); } catch(e){}
   }
-  const buf = await actx.decodeAudioData(bytes.slice(0));
-  memCache.set(key, buf); if (memCache.size > 120) memCache.delete(memCache.keys().next().value);
+  const buf = await new Promise((ok, bad) => { const p = actx.decodeAudioData(bytes.slice(0), ok, bad); if (p && p.then) p.then(ok, bad); });
+  memCache.set(url, buf); if (memCache.size > 150) memCache.delete(memCache.keys().next().value);
   return buf;
 }
 function play(buf, my){
-  return new Promise(res => {
+  return new Promise(async res => {
     if (my !== seq) return res();
+    try { if (actx.state !== "running") await actx.resume(); } catch(e){}
     const s = actx.createBufferSource(); s.buffer = buf; s.connect(actx.destination); curSrc = s;
-    s.onended = () => { if (curSrc === s) curSrc = null; res(); };
-    try { s.start(0); } catch(e){ res(); }
+    const guard = setTimeout(end, buf.duration*1000 + 1500);
+    function end(){ clearTimeout(guard); if (curSrc === s) curSrc = null; res(); }
+    s.onended = end;
+    try { s.start(0); } catch(e){ end(); }
   });
 }
 let voices = [];
@@ -273,7 +313,8 @@ function deviceSay(text){
   return new Promise(res => {
     if (!("speechSynthesis" in window)) return res();
     const u = new SpeechSynthesisUtterance(text); u.lang = "pt-BR"; u.rate = .95;
-    const v = voices.filter(v => (v.lang||"").toLowerCase().replace("_","-") === "pt-br").sort((a,b) => /premium|enhanced|aprimorad|google/i.test(b.name) - /premium|enhanced|aprimorad|google/i.test(a.name))[0];
+    const sc = v => (/premium|enhanced|aprimorad|melhorad/i.test(v.name) ? 4 : 0) + (/luciana|fernanda|francisca|leila|thalita|raquel|google/i.test(v.name) ? 2 : 0) - (/felipe|daniel|antonio/i.test(v.name) ? 3 : 0);
+    const v = voices.filter(v => (v.lang||"").toLowerCase().replace("_","-") === "pt-br").sort((a,b) => sc(b) - sc(a))[0];
     if (v) u.voice = v;
     const g = setTimeout(res, 2500 + text.length*110); u.onend = u.onerror = () => { clearTimeout(g); res(); };
     try { speechSynthesis.speak(u); } catch(e){ res(); }
@@ -283,15 +324,17 @@ async function say(text){
   if (!text) return;
   const my = seq;
   unlockAudio();
+  const talking = on => { document.body.classList.toggle("talking", on); duck(on); };
   if (actx && Date.now() > cloudOffUntil){
-    try { const buf = await getVoice(text); if (my !== seq) return; await play(buf, my); return; }
-    catch(e){ if (my !== seq) return; cloudOffUntil = Date.now() + 10*60*1000; }
+    try { const buf = await getVoice(text); if (my !== seq) return; talking(true); await play(buf, my); if (my === seq) talking(false); return; }
+    catch(e){ talking(false); if (my !== seq) return; cloudOffUntil = Date.now() + 3*60*1000; }
   }
-  if (my === seq) await deviceSay(text);
+  if (my !== seq) return;
+  talking(true); await deviceSay(text); talking(false);
 }
-function hush(){ seq++; try { curSrc && curSrc.stop(); } catch(e){} curSrc = null; try { speechSynthesis.cancel(); } catch(e){} }
+function hush(){ seq++; try { curSrc && curSrc.stop(); } catch(e){} curSrc = null; try { speechSynthesis.cancel(); } catch(e){} document.body.classList.remove("talking"); duck(false); }
 // warm the cache for a phase so the game feels instant
-function prefetch(lines){ if (!actx) return; (async () => { for (const t of lines){ try { await getVoice(t); } catch(e){ return; } } })(); }
+function prefetch(lines){ if (!actx) return; (async () => { for (const t of lines.slice(0, 6)){ try { await getVoice(t); } catch(e){ return; } } })(); }
 
 /* little sound effects */
 function blip(notes){
@@ -301,6 +344,38 @@ function blip(notes){
 const ding = () => blip([[660,.14,0],[880,.14,.1],[1320,.25,.2]]);
 const boop = () => blip([[300,.18,0],[240,.22,.12]]);
 const fanfare = () => blip([[523,.15,0],[659,.15,.15],[784,.15,.3],[1047,.4,.45]]);
+
+/* background music: a soft music-box version of the traditional "Twinkle Twinkle Little Star" (public domain) */
+const MELODY = (() => {
+  const N = { C:523.25, D:587.33, E:659.25, F:698.46, G:783.99, A:880.00 };
+  const phrase = str => str.split(" ").map(t => [N[t[0]], t.length > 1 ? 2 : 1]);
+  return [].concat(phrase("C C G G A A G2"), phrase("F F E E D D C2"), phrase("G G F F E E D2"), phrase("G G F F E E D2"), phrase("C C G G A A G2"), phrase("F F E E D D C2"));
+})();
+const BASS = { 523.25:130.81, 587.33:146.83, 659.25:130.81, 698.46:174.61, 783.99:196.00, 880.00:174.61 };
+let musicGain = null, musicTimer = null, mIdx = 0, mNext = 0;
+const BEAT = .52, MVOL = .06, MDUCK = .018;
+function musicOn(){
+  if (!actx || musicTimer) return;
+  if (!musicGain){ musicGain = actx.createGain(); musicGain.connect(actx.destination); }
+  musicGain.gain.setValueAtTime(document.body.classList.contains("talking") ? MDUCK : MVOL, actx.currentTime);
+  mNext = actx.currentTime + .15;
+  musicTimer = setInterval(() => {
+    while (mNext < actx.currentTime + .6){
+      const [f, len] = MELODY[mIdx % MELODY.length]; const d = len * BEAT;
+      [[f, .5, "sine"], [f*2, .12, "sine"], [mIdx % 2 === 0 ? BASS[f] : 0, .35, "triangle"]].forEach(([fr, v, type]) => {
+        if (!fr) return;
+        const o = actx.createOscillator(), g = actx.createGain(); o.type = type; o.frequency.value = fr;
+        g.gain.setValueAtTime(0, mNext); g.gain.linearRampToValueAtTime(v, mNext + .015); g.gain.exponentialRampToValueAtTime(.001, mNext + d * .95);
+        o.connect(g); g.connect(musicGain); o.start(mNext); o.stop(mNext + d);
+      });
+      mNext += d; mIdx++;
+      if (mIdx % MELODY.length === 0) mNext += BEAT * 2;   // little breath between loops
+    }
+  }, 120);
+}
+function musicOff(){ clearInterval(musicTimer); musicTimer = null; if (musicGain) try { musicGain.gain.setTargetAtTime(0, actx.currentTime, .1); } catch(e){} }
+function duck(on){ if (!musicGain || !actx || !musicTimer) return; try { musicGain.gain.setTargetAtTime(on ? MDUCK : MVOL, actx.currentTime, .15); } catch(e){} }
+function syncMusicBtn(){ $("#musicBtn").textContent = K.music ? "🎵" : "🔇"; $("#musicBtn").setAttribute("aria-label", K.music ? "Desligar música" : "Ligar música"); }
 
 /* confetti */
 const fx = $("#fx"), fc = fx.getContext("2d"); let bits = [];
@@ -383,7 +458,7 @@ function startPhase(i){
   G = { i, ph, words, rounds: ordered, r:0, miss:0, got:0 };
   $("#roundStars").textContent = 0; $("#bar").style.width = "0%";
   show("#play");
-  prefetch(words.flatMap(w => ["Toque no " + w.en + "!", w.en + "! " + w.en + " é " + w.pt + "."]));
+  prefetch(["Fase de " + ph.title.toLowerCase() + "! Vamos nessa?", ...words.map(w => "Toque no " + w.en + "!")]);
   intro();
 }
 async function intro(){
@@ -410,7 +485,8 @@ function nextRound(){
 }
 async function win(w, extra){
   G.got++; ding(); confetti(50); $("#roundStars").textContent = G.got;
-  await say(pick(PRAISE) + " " + w.en + " é " + w.pt + ".");
+  await say(pick(PRAISE));
+  await say(w.en + "! " + w.en + " é " + w.pt + ".");
   G.r++; await wait(250); nextRound();
 }
 function tapRound(w){
@@ -427,7 +503,7 @@ function tapRound(w){
     c.onclick = async () => {
       if (locked) return;
       if (o.en === w.en){ locked = true; c.classList.add("right"); hush(); await win(w); }
-      else { tries++; c.classList.add("wrong"); c.disabled = true; boop(); if (tries === 1) G.miss++; hush(); say(pick(RETRY) + " " + prompt); }
+      else { tries++; c.classList.add("wrong"); c.disabled = true; boop(); if (tries === 1) G.miss++; hush(); const my = seq; say(pick(RETRY)).then(() => { if (my === seq) say(prompt); }); }
     };
     grid.append(c);
   });
@@ -472,21 +548,56 @@ async function finish(){
   const L = $("#learned"); L.textContent = ""; G.words.forEach(w => L.append(el("span", null, w.e + " " + w.en)));
   show("#done"); fanfare(); confetti(160);
   const worldDone = n % 4 === 0;
-  await say((stars === 3 ? "Uau! Três estrelas! " : "Parabéns, você completou a fase! ") + (worldDone ? "E ganhou um troféu! Você é demais!" : "Bora para a próxima?"));
+  await say(stars === 3 ? "Uau! Três estrelas!" : "Parabéns, você completou a fase!");
+  await say(worldDone ? "E ganhou um troféu! Você é demais!" : "Você ganhou uma figurinha nova! Bora para a próxima?");
 }
+function openAlbum(){
+  hush();
+  const A = $("#album"); A.textContent = ""; let got = 0;
+  PHASES.forEach((ph, i) => {
+    const has = (K.stars[ph.id] || 0) > 0; if (has) got++;
+    const d = el("div", "stk" + (has ? "" : " no"), has ? ph.icon : "?"); d.style.setProperty("--r", ((i*37)%9 - 4) + "deg");
+    if (has) d.append(el("small", null, ph.title));
+    A.append(d);
+  });
+  $("#albumTxt").textContent = got + " de " + PHASES.length + " figurinhas. " + (got === PHASES.length ? "Álbum completo! 🏆" : "Complete fases para ganhar mais!");
+  $("#albumSheet").hidden = false;
+  say(got ? "Olha só o seu álbum de figurinhas!" : "Seu álbum está vazio. Complete uma fase para ganhar a primeira figurinha!");
+}
+$("#albumBtn").onclick = openAlbum;
+$("#albumClose").onclick = () => { hush(); $("#albumSheet").hidden = true; };
 $("#next").onclick = () => { hush(); show("#home"); renderMap(); };
+$("#musicBtn").onclick = () => { unlockAudio(); K.music = !K.music; save(); syncMusicBtn(); K.music ? musicOn() : musicOff(); };
 $("#quit").onclick = () => { hush(); show("#home"); renderMap(); };
 
-/* ---------- start ---------- */
-function boot(){
-  renderTop(); renderMap();
-  if (!K.name){ $("#nameSheet").hidden = false; }
+/* ---------- start: welcome screen with a greeting every time the app opens ---------- */
+function timeHello(){ const h = new Date().getHours(); return h < 12 ? "Bom dia" : h < 18 ? "Boa tarde" : "Boa noite"; }
+async function greet(first){
+  hush(); const my = seq;
+  if (first){ await say("Oi! Eu sou a Sunny! Vamos aprender inglês brincando?"); return; }
+  await say(timeHello() + ", " + K.name + "!"); if (my !== seq) return;
+  const done = Object.keys(K.stars).length;
+  await say(K.streak >= 2 ? "Você está mandando muito bem, voltando todo dia! Vamos jogar?" : done ? "Que bom te ver de novo! Vamos continuar a aventura?" : "Que bom te ver! Toque na primeira fase para começar!");
 }
-$("#nameGo").onclick = () => {
+function boot(){
+  renderTop(); renderMap(); syncMusicBtn();
+  $("#splashTxt").textContent = K.name ? timeHello() + ", " + K.name + "! Toque para jogar" : "Toque para começar!";
+}
+$("#splashGo").onclick = () => {
+  unlockAudio();
+  $("#splash").hidden = true;
+  if (K.music) musicOn();
+  touchDay(); save();
+  if (!K.name){ $("#nameSheet").hidden = false; say("Oi! Eu sou a Sunny! Qual é o seu nome?"); }
+  else greet(false);
+};
+$("#nameGo").onclick = async () => {
   unlockAudio();
   K.name = $("#kidName").value.trim().slice(0, 20); save();
   $("#nameSheet").hidden = true; renderMap();
-  say((K.name ? "Oi, " + K.name + "! " : "Oi! ") + "Eu sou o Solzinho! Vamos aprender inglês brincando? Toque na primeira fase!");
+  hush(); const my = seq;
+  if (K.name){ await say("Oi, " + K.name + "!"); if (my !== seq) return; }
+  say("Vamos aprender inglês brincando? Toque na primeira fase!");
 };
 $("#kidName").addEventListener("keydown", e => { if (e.key === "Enter") $("#nameGo").click(); });
 boot();
