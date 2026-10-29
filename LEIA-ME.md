@@ -49,15 +49,26 @@ A voz natural é gerada pela IA de voz do Google com a mesma `GEMINI_API_KEY`. E
 
 Variáveis opcionais na Vercel: `DESTRAVA_VOICE` (voz padrão, ex.: `Puck`) e `DESTRAVA_TTS_MODEL` (modelo de voz, padrão `gemini-3.1-flash-tts-preview`).
 
-## Destrava Kids
+## Destrava Kids (v4: a aventura do Super Benjamin)
 
-Acesse pelo botão **Destrava Kids** na tela inicial ou em `seu-link.vercel.app/kids.html`. É um jogo:
-- **Mapa** com 4 mundos ilustrados e 16 fases ligadas por uma trilha. A Sunny fica na fase atual.
-- **Cada fase tem 5 minijogos:** Conhecer (cartões), Bolhas mágicas, Memória, Palavra mágica (fala no microfone) e Chuva de figuras (contra o relógio).
-- **Recompensas:** moedas a cada acerto, combos, baú no fim da fase, estrelas, troféus por mundo e figurinhas no álbum.
-- **Loja da Sunny:** acessórios comprados com moedas. **Missões diárias** abrem um baú de 50 moedas.
-- **Saudação pelo nome** toda vez que abre e uma **trilha sonora original animada**, baixinha, com botão 🎵.
-- **Voz feminina natural (Zephyr).** Cada frase é gerada uma única vez e fica guardada na Vercel e no aparelho.
+Acesse pelo botão **Destrava Kids** ou em `seu-link.vercel.app/kids.html`.
+
+**Arquivos do Benjamin** (precisam estar no repositório, na mesma pasta do `kids.html`):
+`hero.png`, `hero-face.png`, `pose-teach.jpg`, `pose-call.jpg`, `pose-yeah.jpg`, `pose-almost.jpg`.
+
+- **Uma jornada só.** O botão **Continuar Aventura** volta exatamente onde a criança parou. São 4 mundos (Floresta Encantada, Casa Mágica, Cidade Alegre, Viagem pelo Mundo) e 19 níveis, de "Conhecendo o Benjamin" até "Conversas simples".
+- **Cada palavra segue a mesma ordem:** o Benjamin mostra a palavra ("Look! It's a DOG!"), a criança fala, recebe o retorno, acha a figura no cenário e depois arrasta cada figura para a sombra dela. No fim tem uma revisão e a comemoração do nível.
+- **O Benjamin muda de cara** conforme o momento: ensinando, ouvindo, "quase" e "acertou". Ele pisca, respira, mexe a boca com a própria voz e chega mais perto quando a criança precisa de incentivo. Ele também voa, dá cambalhotas e, no fim de cada nível, sobe pelas nuvens douradas e volta trazendo uma estrela.
+- **O microfone mostra o que está fazendo:** falando, ouvindo, pensando, acertou, quase e "precisa de ajuda". Silêncio nunca conta como erro. Depois de 2 tentativas, o Benjamin elogia o esforço, segue em frente e traz a palavra de volta na revisão.
+- **Sem microfone** (navegador sem suporte ou permissão negada): aparece o botão **Eu falei!** para o adulto confirmar.
+- **Área dos pais** (engrenagem ou "Pais"), protegida por uma continha: nome, idade, tempo de sessão, música, voz e **apagar todos os dados**.
+- **Pausas saudáveis:** depois do tempo da sessão, o Benjamin se despede sentado na nuvem, sem pressionar.
+
+### Voz própria do Benjamin (opcional)
+Por padrão, o Benjamin usa a voz natural do Google (Puck), com sotaque de Brasília. Para usar uma voz infantil própria pela ElevenLabs, criada com autorização e consentimento dos pais, coloque na Vercel:
+- `ELEVENLABS_API_KEY`: a chave da ElevenLabs
+- `ELEVENLABS_VOICE_ID`: o ID da voz do Benjamin
+Se a ElevenLabs falhar, o app volta sozinho para a voz do Google. Ao trocar a voz, aumente `VOICE_REV` no `kids.html` (de 1 para 2) para renovar o cache das falas.
 
 ## Ajustes úteis
 

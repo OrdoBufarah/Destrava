@@ -8,8 +8,25 @@ const VOICES = ["Puck", "Charon", "Achird", "Sadaltager", "Kore", "Aoede", "Sula
 
 // Estilos fixos guardados no servidor (usados pelo modo GET, que fica em cache na CDN da Vercel).
 const STYLES = {
+  hero: "Você é o Super Benjamin, um super-herói mirim simpático que ensina inglês para crianças brasileiras. Fale como um amigo animado e carinhoso, vibrando junto, devagar e bem claro. As partes em português têm sotaque brasileiro de Brasília, nunca português de Portugal. As palavras em inglês têm pronúncia americana nativa, bem caprichada. Leia em voz alta exatamente este texto:",
+  heromini: "Você é o Super Benjamin, um super-herói mirim que ensina inglês para crianças bem pequenas, de 3 e 4 anos. Fale com muito carinho e doçura, bem devagar, sorrindo, como um amigo que abraça. As partes em português têm sotaque brasileiro de Brasília, nunca português de Portugal. As palavras em inglês têm pronúncia americana nativa, lenta e caprichada. Leia em voz alta exatamente este texto:",
   kids: "Você é a Sunny, uma mascote alegre que ensina inglês para crianças brasileiras pequenas. Fale com muita animação, carinho e sorriso na voz, devagar e bem claro, como uma professora de educação infantil. As partes em português têm sotaque brasileiro de Brasília, nunca português de Portugal. As palavras em inglês têm pronúncia americana nativa, bem caprichada. Leia em voz alta exatamente este texto:",
 };
+// Voz própria do Super Benjamin (opcional): ElevenLabs.
+// Com ELEVENLABS_API_KEY + ELEVENLABS_VOICE_ID na Vercel, as falas do Kids usam essa voz
+// (ex.: uma voz infantil autorizada, criada com consentimento dos pais). Sem elas, segue no Gemini.
+const EL_KEY = (process.env.ELEVENLABS_API_KEY || "").trim();
+const EL_VOICE = (process.env.ELEVENLABS_VOICE_ID || "").trim();
+const EL_MODEL = process.env.ELEVENLABS_MODEL || "eleven_multilingual_v2";
+async function elevenLabs(text, mini) {
+  const r = await fetch("https://api.elevenlabs.io/v1/text-to-speech/" + encodeURIComponent(EL_VOICE) + "?output_format=mp3_44100_128", {
+    method: "POST",
+    headers: { "content-type": "application/json", "xi-api-key": EL_KEY, accept: "audio/mpeg" },
+    body: JSON.stringify({ text, model_id: EL_MODEL, voice_settings: { stability: 0.45, similarity_boost: 0.8, style: 0.55, use_speaker_boost: true, speed: mini ? 0.88 : 0.97 } }),
+  });
+  if (!r.ok) throw new Error("elevenlabs " + r.status);
+  return Buffer.from(await r.arrayBuffer());
+}
 const ACCESS_CODE = (process.env.DESTRAVA_ACCESS_CODE || "").trim();
 
 // Gemini devolve PCM cru (16-bit, mono, 24 kHz). Aqui colocamos o cabeçalho WAV.
@@ -23,7 +40,7 @@ function pcmToWav(pcm, rate = 24000, channels = 1, bits = 16) {
 }
 
 module.exports = async (req, res) => {
-  if (!process.env.GEMINI_API_KEY) return res.status(500).json({ error: "no_tts_key" });
+  if (!process.env.GEMINI_API_KEY && !EL_KEY) return res.status(500).json({ error: "no_tts_key" });
 
   // GET  /api/tts?s=kids&v=Zephyr&t=texto  -> frases fixas; a resposta fica em cache na CDN
   //       (cada frase é gerada uma vez só e serve todo mundo, sem gastar o limite de novo)
@@ -45,6 +62,16 @@ module.exports = async (req, res) => {
   } else return res.status(405).json({ error: "method" });
   if (!text) return res.status(400).json({ error: "empty" });
   const prompt = (style ? style + "\n\n" : "") + text;
+
+  const styleKey = req.method === "GET" ? new URL(req.url, "http://x").searchParams.get("s") : "";
+  if (EL_KEY && EL_VOICE && (styleKey === "hero" || styleKey === "heromini")) {
+    try {
+      const mp3 = await elevenLabs(text, styleKey === "heromini");
+      res.setHeader("Content-Type", "audio/mpeg");
+      res.setHeader("Cache-Control", "public, max-age=31536000, s-maxage=31536000, immutable");
+      return res.status(200).send(mp3);
+    } catch (e) { console.error(e); if (!process.env.GEMINI_API_KEY) { res.setHeader("Cache-Control", "no-store"); return res.status(502).json({ error: "tts_error" }); } }
+  }
 
   try {
     const url = "https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(TTS_MODEL) + ":generateContent";
