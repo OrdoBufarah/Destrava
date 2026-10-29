@@ -6,6 +6,8 @@ App de inglês por voz com o professor Jarvis. Funciona no navegador do celular,
 
 - `index.html`: o app (modo voz com a esfera e a tela de conversa)
 - `api/chat.js`: o servidor que fala com a IA (sua chave fica só aqui, segura)
+- `api/tts.js`: a voz natural do Jarvis (IA de voz do Google, a mesma em qualquer aparelho)
+- `kids.html`: o **Destrava Kids**, inglês para crianças em forma de joguinho (16 fases em 4 mundos)
 - `manifest.json` e ícones: para instalar na tela inicial como um app
 
 ## 1. Pegar a chave da IA
@@ -13,7 +15,7 @@ App de inglês por voz com o professor Jarvis. Funciona no navegador do celular,
 ### Opção grátis para testar (Google Gemini, sem cartão)
 1. Acesse **aistudio.google.com** e entre com sua conta Google.
 2. Clique em **Get API key → Create API key**.
-3. Copie a chave (começa com `AIza`).
+3. Copie a chave (pode começar com `AQ.` ou `AIza`).
 4. Na Vercel, use a variável **`GEMINI_API_KEY`** com essa chave.
 
 O plano grátis tem limite de mensagens por dia. Se aparecer "Limite de mensagens atingido", é só esperar o dia seguinte.
@@ -41,6 +43,19 @@ O plano grátis tem limite de mensagens por dia. Se aparecer "Limite de mensagen
 4. Fale em inglês. Quando ele terminar de responder, ele volta a te ouvir sozinho. Para pausar, toque no microfone de novo.
 5. Para virar app: no iPhone, toque em **Compartilhar → Adicionar à Tela de Início**. No Android, **⋮ → Instalar app**.
 
+## Voz do Jarvis
+
+A voz natural é gerada pela IA de voz do Google com a mesma `GEMINI_API_KEY`. Em Ajustes → **Voz do Jarvis** dá para escolher entre 8 vozes. Se o limite grátis do dia acabar, o app passa sozinho para a voz do aparelho e volta depois.
+
+Variáveis opcionais na Vercel: `DESTRAVA_VOICE` (voz padrão, ex.: `Puck`) e `DESTRAVA_TTS_MODEL` (modelo de voz, padrão `gemini-3.1-flash-tts-preview`).
+
+## Destrava Kids
+
+Acesse pelo botão **Destrava Kids** na tela inicial ou em Ajustes, ou direto em `seu-link.vercel.app/kids.html`.
+- Mapa de fases: cada fase tem 5 palavras e 8 desafios (ouvir e tocar a figura, e falar a palavra).
+- Estrelas por fase, troféu a cada mundo, confete e o mascote Solzinho incentivando o tempo todo.
+- A voz fica guardada no aparelho depois da primeira vez, então repetir fases não gasta o limite grátis.
+
 ## Ajustes úteis
 
 - **Professor educado ou impaciente**, velocidade da voz e legendas: ícone de ajustes no topo do modo voz.
@@ -50,5 +65,5 @@ O plano grátis tem limite de mensagens por dia. Se aparecer "Limite de mensagen
 ## Limites desta versão
 
 - O progresso fica salvo no próprio celular. Trocar de aparelho começa do zero (contas de usuário vêm na próxima versão).
-- A voz do Jarvis é a voz do sistema do celular. Vozes mais naturais (com sotaque brasileiro de verdade no português) entram numa próxima etapa.
+- A voz natural está em versão de prévia no Google e o plano grátis tem limite diário.
 - O reconhecimento de voz depende do navegador. Funciona bem no Chrome e no Safari atualizados.

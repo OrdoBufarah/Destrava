@@ -134,6 +134,11 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .seg{display:inline-flex;background:var(--paper);border:1px solid var(--line);border-radius:999px;overflow:hidden;align-self:flex-start}
 .seg button{border:0;background:none;padding:8px 14px;font-size:14px;font-weight:600}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--sun)}
+.vsel{border:1px solid var(--line);background:var(--paper);border-radius:12px;padding:11px 12px;font:inherit;font-weight:400;color:var(--ink);max-width:100%}
+.kidsbtn{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);background:var(--paper);border:2px dashed var(--sun-deep);border-radius:16px;padding:12px 14px}
+.kidsbtn > span:first-child{font-size:30px}
+.kidsbtn b{display:block}
+.kidsbtn small{color:var(--muted);font-size:14px}
 .toggle{display:flex;justify-content:space-between;align-items:center;font-weight:700}
 .toggle input{width:22px;height:22px;accent-color:var(--ink)}
 .closer{align-self:flex-end;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 14px;font-weight:600}
@@ -224,6 +229,7 @@ h3{font:800 17px/1.2 var(--logo);margin:6px 0 0}
     <div class="field"><label for="nameInput">Como o Jarvis deve te chamar?</label><input id="nameInput" autocomplete="given-name" placeholder="Seu nome"></div>
     <div class="field"><label for="codeInput">Código de acesso <span style="font-weight:400;color:var(--muted)">(se você configurou um)</span></label><input id="codeInput" autocomplete="off" placeholder="Opcional"></div>
     <button class="big" id="startBtn">Começar</button>
+    <a class="kidsbtn" href="/kids.html"><span>🧒</span><span><b>Destrava Kids</b><small>Inglês para crianças, em forma de joguinho</small></span></a>
   </div>
 </div>
 
@@ -239,7 +245,27 @@ h3{font:800 17px/1.2 var(--logo);margin:6px 0 0}
       <div class="seg" id="speedSeg"><button type="button" data-r="0.75">Devagar</button><button type="button" data-r="0.9">Normal</button><button type="button" data-r="1.05">Rápido</button></div>
     </div>
     <div class="field"><label for="codeInput2">Código de acesso</label><input id="codeInput2" autocomplete="off" placeholder="Opcional"></div>
+    <div class="field"><label for="jvoice">Voz do Jarvis</label>
+      <select id="jvoice" class="vsel">
+        <option value="Puck">Natural · Puck (animada)</option>
+        <option value="Achird">Natural · Achird (amigável)</option>
+        <option value="Charon">Natural · Charon (informativa)</option>
+        <option value="Sadaltager">Natural · Sadaltager (experiente)</option>
+        <option value="Sulafat">Natural · Sulafat (calorosa)</option>
+        <option value="Kore">Natural · Kore (firme)</option>
+        <option value="Aoede">Natural · Aoede (leve)</option>
+        <option value="Leda">Natural · Leda (jovem)</option>
+        <option value="device">Voz do aparelho (funciona offline)</option>
+      </select>
+    </div>
+    <p class="note">A voz natural é gerada por IA e soa igual em qualquer aparelho. A voz do aparelho é mais robótica, mas não depende de internet.</p>
+    <div id="deviceVoices" hidden>
+    <div class="field"><label for="voiceEn">Voz do aparelho em inglês</label><select id="voiceEn" class="vsel"></select></div>
+    <div class="field"><label for="voicePt">Voz do aparelho em português</label><select id="voicePt" class="vsel"></select></div>
+    <p class="note" id="voiceNote">Vozes marcadas com ★ são as mais naturais. Para ter vozes melhores no Mac: Ajustes do Sistema → Acessibilidade → Conteúdo Falado → Voz do Sistema → Gerenciar Vozes, e baixe uma voz "Premium" ou "Aprimorada" em Inglês (EUA) e Português (Brasil). Depois recarregue o app.</p>
+    </div>
     <label class="toggle" for="ccToggle">Legendas no modo voz<input type="checkbox" id="ccToggle"></label>
+    <a class="kidsbtn" href="/kids.html"><span>🧒</span><span><b>Destrava Kids</b><small>Inglês para crianças, em forma de joguinho</small></span></a>
     <h2 style="font-size:20px;margin-top:6px">Comandos</h2>
     <button class="line" data-c="Jarvis, começar aula"><b>Começar aula</b><span>Aula do dia, com revisão e tema novo</span></button>
     <button class="line" data-c="Jarvis, revisão"><b>Revisão</b><span>Volta nas expressões e nos erros anteriores</span></button>
@@ -262,7 +288,7 @@ const LABEL = { A1:"Iniciante", A2:"Básico", B1:"Intermediário", B2:"Conversa�
 const STEP = 1500;
 
 /* ---------- state ---------- */
-const blank = () => ({ name:"", level:"A1", assessed:false, xp:0, startDate:null, lastDate:null, streak:0, totalMin:0, todayMin:0, sessions:0, turns:0, rate:0.9, persona:"educado", cc:false, vocab:[], mistakes:[] });
+const blank = () => ({ name:"", level:"A1", assessed:false, xp:0, startDate:null, lastDate:null, streak:0, totalMin:0, todayMin:0, sessions:0, turns:0, rate:0.95, persona:"educado", cc:false, voiceEn:"", voicePt:"", jvoice:"Puck", vocab:[], mistakes:[] });
 let sampleReady = true;
 const api = {
   async json(messages){
@@ -362,16 +388,45 @@ requestAnimationFrame(draw);
 
 /* ---------- voice out ---------- */
 let voices = [];
-const loadVoices = () => { try { voices = speechSynthesis.getVoices() || []; } catch(e){ voices = []; } };
+const loadVoices = () => { try { voices = speechSynthesis.getVoices() || []; } catch(e){ voices = []; } try { fillVoiceSelects(); } catch(e){} };
 if ("speechSynthesis" in window){ loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+const vlang = v => (v.lang||"").replace("_","-").toLowerCase();
+const isEn = v => vlang(v).startsWith("en-us") || vlang(v) === "en";
+const isPt = v => vlang(v) === "pt-br";                     // only Brazilian Portuguese, never European
+// higher = more natural
+function vscore(v){
+  const n = v.name || ""; let s = 0;
+  if (/premium/i.test(n)) s += 100;
+  if (/enhanced|aprimorad|melhorad/i.test(n)) s += 80;
+  if (/natural|neural|online/i.test(n)) s += 70;            // Edge / Windows natural voices
+  if (/^google/i.test(n)) s += 50;                          // Chrome network voices
+  if (/\b(ava|zoe|evan|nathan|joelle|noelle|tom|allison|susan|luciana|felipe|fernanda)\b/i.test(n)) s += 20;
+  if (/samantha|alex/i.test(n)) s += 10;
+  if (/fred|albert|bad news|bahh|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|wobble|zarvox|junior|ralph|kathy|grandma|grandpa|eddy|flo|reed|rocko|sandy|shelley/i.test(n)) s -= 200; // novelty / robotic voices
+  if (v.localService === false) s += 5;
+  return s;
+}
+const ranked = test => voices.filter(test).sort((a,b) => vscore(b) - vscore(a));
 function pickVoice(lang){
-  const n = v => (v.lang||"").replace("_","-").toLowerCase();
-  if (lang === "pt-BR") return voices.find(v => n(v) === "pt-br") || null;   // never European Portuguese
-  const en = voices.filter(v => n(v).startsWith("en-us"));
-  return en.find(v => /samantha|google us|aria|jenny|natural/i.test(v.name)) || en[0] || voices.find(v => n(v).startsWith("en")) || null;
+  const list = lang === "pt-BR" ? ranked(isPt) : ranked(isEn);
+  const want = lang === "pt-BR" ? P.voicePt : P.voiceEn;
+  return list.find(v => v.name === want) || list[0] || (lang === "pt-BR" ? null : voices.find(v => vlang(v).startsWith("en")) || null);
+}
+function fillVoiceSelects(){
+  [["#voiceEn", isEn, "voiceEn", "Hi! I'm Jarvis, your English teacher.", "en-US"],
+   ["#voicePt", isPt, "voicePt", "Oi! Eu sou o Jarvis, seu professor de inglês.", "pt-BR"]].forEach(([sel, test, key, sample, lang]) => {
+    const el = $(sel); if (!el) return;
+    const list = ranked(test); el.textContent = "";
+    if (!list.length){ el.append(new Option(lang === "pt-BR" ? "Nenhuma voz pt-BR instalada" : "Nenhuma voz em inglês instalada", "")); el.disabled = true; return; }
+    el.disabled = false;
+    const cur = pickVoice(lang);
+    list.forEach(v => { const o = new Option((vscore(v) >= 50 ? "★ " : "") + v.name, v.name); if (cur && v.name === cur.name) o.selected = true; el.append(o); });
+    el.onchange = () => { P[key] = el.value; save(); stopSpeech(); deviceSpeak(sample, lang).then(() => setMode("idle","Sua vez")); };
+  });
 }
 let seq = 0;
-function speak(text, lang, rate){
+/* device voice (fallback / offline) */
+function deviceSpeak(text, lang, rate){
   return new Promise(res => {
     if (!text || !("speechSynthesis" in window)) return res();
     const u = new SpeechSynthesisUtterance(text); u.lang = lang; const v = pickVoice(lang); if (v) u.voice = v; u.rate = rate ?? P.rate;
@@ -383,14 +438,85 @@ function speak(text, lang, rate){
     try { speechSynthesis.speak(u); } catch(e){ done(); }
   });
 }
-function stopSpeech(){ seq++; try { speechSynthesis.cancel(); } catch(e){} }
+
+/* natural voice: generated on the server, played through Web Audio so the orb follows the real sound */
+let actx = null, analyser = null, curSrc = null, cloudOffUntil = 0, cloudTipShown = false;
+const audioCache = new Map();
+function unlockAudio(){
+  try {
+    if (!actx){ const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return; actx = new AC(); analyser = actx.createAnalyser(); analyser.fftSize = 512; analyser.connect(actx.destination); }
+    if (actx.state === "suspended") actx.resume();
+    const b = actx.createBuffer(1, 1, 22050), s0 = actx.createBufferSource(); s0.buffer = b; s0.connect(actx.destination); s0.start(0);
+  } catch(e){}
+}
+["pointerdown","touchend","keydown"].forEach(ev => document.addEventListener(ev, unlockAudio, { passive:true }));
+function voiceStyle(){
+  const persona = P.persona === "impaciente"
+    ? "com uma impaciência dramática e engraçada, suspirando, como um tio brincalhão sem paciência"
+    : "com calma, simpatia e paciência, encorajando o aluno";
+  const pace = P.rate < .85 ? " Fale bem devagar e articulado." : P.rate > 1 ? " Fale num ritmo ágil." : "";
+  return "Você é o Jarvis, professor de inglês brasileiro, de Brasília. Fale " + persona + "." + pace +
+    " As partes em português têm sotaque brasileiro natural de Brasília, nunca português de Portugal. As partes em inglês têm pronúncia americana nativa e clara. Leia em voz alta exatamente este texto:";
+}
+async function fetchVoice(text){
+  const voice = P.jvoice || "Puck", style = voiceStyle(), key = voice + "|" + style + "|" + text;
+  if (audioCache.has(key)) return audioCache.get(key);
+  let code = ""; try { code = localStorage.getItem("destrava_code") || ""; } catch(e){}
+  const r = await fetch("/api/tts", { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ text, voice, style, code }) });
+  if (!r.ok){ const d = await r.json().catch(() => ({})); throw { code: d.error || "tts_error", status: r.status }; }
+  const buf = await actx.decodeAudioData(await r.arrayBuffer());
+  audioCache.set(key, buf); if (audioCache.size > 60) audioCache.delete(audioCache.keys().next().value);
+  return buf;
+}
+function playBuffer(buf, my){
+  return new Promise(res => {
+    if (my !== seq) return res();
+    const src = actx.createBufferSource(); src.buffer = buf; src.connect(analyser); curSrc = src;
+    const data = new Uint8Array(analyser.fftSize); let live = true;
+    const meter = () => { if (!live) return; analyser.getByteTimeDomainData(data); let sum = 0; for (let i = 0; i < data.length; i++){ const v = (data[i]-128)/128; sum += v*v; } const rms = Math.sqrt(sum/data.length); O.pulse = Math.min(1, Math.max(O.pulse*.85, rms*3.2)); requestAnimationFrame(meter); };
+    src.onended = () => { live = false; if (curSrc === src) curSrc = null; res(); };
+    setMode("jarvis","Jarvis falando"); requestAnimationFrame(meter);
+    try { src.start(0); } catch(e){ live = false; res(); }
+  });
+}
+async function say(text, lang, rate){
+  if (!text) return;
+  const my = seq;
+  const natural = (P.jvoice || "Puck") !== "device" && Date.now() > cloudOffUntil;
+  if (natural){
+    unlockAudio();
+    if (actx){
+      try {
+        if (O.mode !== "jarvis") setMode("think","Preparando a voz…");
+        const buf = await fetchVoice(text);
+        if (my !== seq) return;
+        await playBuffer(buf, my); return;
+      } catch(e){
+        if (my !== seq) return;
+        if (e && (e.code === "rate_limited" || e.code === "no_tts_key" || e.status === 404)) cloudOffUntil = Date.now() + 10*60*1000;
+        if (!cloudTipShown){ cloudTipShown = true; showTip(e && e.code === "rate_limited" ? "Limite grátis da voz natural atingido. Usando a voz do aparelho por enquanto." : "Voz natural indisponível agora. Usando a voz do aparelho."); }
+      }
+    }
+  }
+  if (my !== seq) return;
+  await deviceSpeak(text, lang, rate);
+}
+const speak = say;
+function stopSpeech(){ seq++; try { speechSynthesis.cancel(); } catch(e){} try { curSrc && curSrc.stop(); } catch(e){} curSrc = null; }
 async function speakReply(r){
   stopSpeech(); const my = seq;
-  const parts = [];
-  if (r.pt) parts.push([r.pt,"pt-BR"]);
-  if (r.correction){ if (r.correction.why) parts.push([r.correction.why,"pt-BR"]); if (r.correction.right) parts.push([r.correction.right,"en-US"]); }
-  if (r.en) parts.push([r.en,"en-US"]);
-  for (const [t,l] of parts){ if (my !== seq) return; await speak(t,l); }
+  const natural = (P.jvoice || "Puck") !== "device" && Date.now() > cloudOffUntil;
+  if (natural){
+    // one voice, one take: Portuguese and English in the same natural voice
+    const script = [r.pt, r.correction && r.correction.why, r.correction && r.correction.right, r.en].filter(Boolean).join(" ");
+    await say(script, "en-US");
+  } else {
+    const parts = [];
+    if (r.pt) parts.push([r.pt,"pt-BR"]);
+    if (r.correction){ if (r.correction.why) parts.push([r.correction.why,"pt-BR"]); if (r.correction.right) parts.push([r.correction.right,"en-US"]); }
+    if (r.en) parts.push([r.en,"en-US"]);
+    for (const [t,l] of parts){ if (my !== seq) return; await deviceSpeak(t,l); }
+  }
   if (my === seq) setMode("idle","Sua vez");
 }
 
@@ -564,12 +690,12 @@ document.querySelectorAll(".sheet").forEach(s => s.addEventListener("click", e =
 document.addEventListener("click", e => { if (e.target.closest("[data-close]")) closeSheets(); });
 document.querySelectorAll("[data-c]").forEach(b => b.onclick = () => send(b.dataset.c));
 $("#toChat").onclick = $("#voiceClose").onclick = () => { stopSpeech(); setMode("idle","Sua vez"); showScreen("chat"); };
-$("#voiceSettings").onclick = $("#voicePlus").onclick = $("#chatMenu").onclick = $("#chatPlus").onclick = () => openSheet("#moreSheet");
+$("#voiceSettings").onclick = $("#voicePlus").onclick = $("#chatMenu").onclick = $("#chatPlus").onclick = () => { loadVoices(); openSheet("#moreSheet"); };
 $("#lvlBtn").onclick = $("#chatMe").onclick = () => { renderProg(); openSheet("#progSheet"); };
 document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
   const t = b.dataset.tab;
   if (t === "prog"){ renderProg(); openSheet("#progSheet"); }
-  else if (t === "more") openSheet("#moreSheet");
+  else if (t === "more"){ loadVoices(); openSheet("#moreSheet"); }
   else showScreen(t);
 });
 
@@ -580,11 +706,14 @@ document.querySelectorAll("#moodSeg button").forEach(b => b.onclick = () => {
   if (P.persona === b.dataset.p) return; setPersona(b.dataset.p); save(); stopSpeech();
   speak(b.dataset.p === "impaciente" ? "Ah, agora sim. Vamos ver se você aguenta." : "Pode ficar tranquilo, vamos no seu ritmo.", "pt-BR", 1).then(() => setMode("idle","Sua vez"));
 });
+function setJVoice(v){ P.jvoice = v || "Puck"; const sel = $("#jvoice"); if (sel) sel.value = P.jvoice; $("#deviceVoices").hidden = P.jvoice !== "device"; }
+$("#jvoice").onchange = e => { setJVoice(e.target.value); cloudOffUntil = 0; cloudTipShown = false; save(); stopSpeech(); unlockAudio(); say("Oi! Eu sou o Jarvis. Hi! I'm your English teacher. Let's practice together!", "pt-BR").then(() => setMode("idle","Sua vez")); };
 function setCC(v){ P.cc = v; $("#cc").hidden = !v; $("#ccToggle").checked = v; }
 $("#codeInput2").onchange = e => { try { localStorage.setItem("destrava_code", e.target.value.trim()); } catch(x){} };
 $("#ccToggle").onchange = e => { setCC(e.target.checked); save(); };
 
 $("#startBtn").onclick = () => {
+  unlockAudio();
   P.name = $("#nameInput").value.trim() || P.name; save();
   try { localStorage.setItem("destrava_code", $("#codeInput").value.trim()); } catch(e){}
   $("#startSheet").hidden = true;
@@ -666,7 +795,7 @@ function endDrive(){
 $("#voiceClose").addEventListener("click", endDrive, true);
 
 /* ---------- boot ---------- */
-function apply(){ $("#nameInput").value = P.name || ""; setRate(P.rate || .9); setPersona(P.persona || "educado"); setCC(!!P.cc); renderLevel(); }
+function apply(){ try { fillVoiceSelects(); } catch(e){} $("#nameInput").value = P.name || ""; setRate(P.rate || .9); setPersona(P.persona || "educado"); setCC(!!P.cc); setJVoice(P.jvoice); renderLevel(); }
 loadLocal(); apply(); setConn(true);
 try { $("#codeInput").value = $("#codeInput2").value = localStorage.getItem("destrava_code") || ""; } catch(e){}
 })();
