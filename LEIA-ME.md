@@ -51,11 +51,13 @@ Variáveis opcionais na Vercel: `DESTRAVA_VOICE` (voz padrão, ex.: `Puck`) e `D
 
 ## Destrava Kids
 
-Acesse pelo botão **Destrava Kids** na tela inicial ou em Ajustes, ou direto em `seu-link.vercel.app/kids.html`.
-- Mapa de fases: cada fase tem 5 palavras e 8 desafios (ouvir e tocar a figura, e falar a palavra).
-- Estrelas por fase, troféu a cada mundo, álbum de figurinhas, confete e a mascote Sunny incentivando o tempo todo.
-- Saudação toda vez que abre (bom dia/boa tarde/boa noite + nome) e música de fundo de caixinha ("Brilha, brilha, estrelinha", domínio público), com botão 🎵 para desligar.
-- Voz feminina natural (Zephyr), igual em todos os aparelhos. Cada frase é gerada uma única vez e fica guardada na Vercel e no aparelho, então quase não gasta o limite grátis.
+Acesse pelo botão **Destrava Kids** na tela inicial ou em `seu-link.vercel.app/kids.html`. É um jogo:
+- **Mapa** com 4 mundos ilustrados e 16 fases ligadas por uma trilha. A Sunny fica na fase atual.
+- **Cada fase tem 5 minijogos:** Conhecer (cartões), Bolhas mágicas, Memória, Palavra mágica (fala no microfone) e Chuva de figuras (contra o relógio).
+- **Recompensas:** moedas a cada acerto, combos, baú no fim da fase, estrelas, troféus por mundo e figurinhas no álbum.
+- **Loja da Sunny:** acessórios comprados com moedas. **Missões diárias** abrem um baú de 50 moedas.
+- **Saudação pelo nome** toda vez que abre e uma **trilha sonora original animada**, baixinha, com botão 🎵.
+- **Voz feminina natural (Zephyr).** Cada frase é gerada uma única vez e fica guardada na Vercel e no aparelho.
 
 ## Ajustes úteis
 
