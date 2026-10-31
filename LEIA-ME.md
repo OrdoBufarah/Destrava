@@ -49,20 +49,28 @@ A voz natural é gerada pela IA de voz do Google com a mesma `GEMINI_API_KEY`. E
 
 Variáveis opcionais na Vercel: `DESTRAVA_VOICE` (voz padrão, ex.: `Puck`) e `DESTRAVA_TTS_MODEL` (modelo de voz, padrão `gemini-3.1-flash-tts-preview`).
 
-## Destrava Kids (v4: a aventura do Super Benjamin)
+## Destrava Kids (v6: as 3 aulas)
 
 Acesse pelo botão **Destrava Kids** ou em `seu-link.vercel.app/kids.html`.
 
-**Arquivos do Benjamin** (precisam estar no repositório, na mesma pasta do `kids.html`):
-`hero.png`, `hero-face.png`, `pose-teach.jpg`, `pose-call.jpg`, `pose-yeah.jpg`, `pose-almost.jpg`.
+**Arquivos do Kids** (todos precisam estar no repositório):
+- `kids.html`: o app
+- `art.js`: os desenhos e a lista das figuras
+- a pasta `img/`: as figuras 3D recortadas da folha de arte (animais, família, brinquedos, escola, casa, potes de tinta e cenários)
+- `hero.png` e `hero-face.png`: o Super Benjamin
 
-- **Uma jornada só.** O botão **Continuar Aventura** volta exatamente onde a criança parou. São 4 mundos (Floresta Encantada, Casa Mágica, Cidade Alegre, Viagem pelo Mundo) e 19 níveis, de "Conhecendo o Benjamin" até "Conversas simples".
-- **Cada palavra segue a mesma ordem:** o Benjamin mostra a palavra ("Look! It's a DOG!"), a criança fala, recebe o retorno, acha a figura no cenário e depois arrasta cada figura para a sombra dela. No fim tem uma revisão e a comemoração do nível.
-- **O Benjamin muda de cara** conforme o momento: ensinando, ouvindo, "quase" e "acertou". Ele pisca, respira, mexe a boca com a própria voz e chega mais perto quando a criança precisa de incentivo. Ele também voa, dá cambalhotas e, no fim de cada nível, sobe pelas nuvens douradas e volta trazendo uma estrela.
-- **O microfone mostra o que está fazendo:** falando, ouvindo, pensando, acertou, quase e "precisa de ajuda". Silêncio nunca conta como erro. Depois de 2 tentativas, o Benjamin elogia o esforço, segue em frente e traz a palavra de volta na revisão.
-- **Sem microfone** (navegador sem suporte ou permissão negada): aparece o botão **Eu falei!** para o adulto confirmar.
-- **Área dos pais** (engrenagem ou "Pais"), protegida por uma continha: nome, idade, tempo de sessão, música, voz e **apagar todos os dados**.
-- **Pausas saudáveis:** depois do tempo da sessão, o Benjamin se despede sentado na nuvem, sem pressionar.
+**A jornada** começa pelas 3 aulas feitas à mão:
+1. **A Casa da Família** (mom, dad, grandma, grandpa e baby). A criança descobre tocando, faz "Find Grandma!", arrasta o papai até a porta ("Bring Dad home!"), responde "Who is this?" e termina com revisão nas bolhas.
+2. **O Quarto dos Brinquedos** (ball, car, teddy bear, doll e bike). A bola quica, o carro anda e o ursinho dança. Ela faz "Find the ball!", arrasta o carro até a pista ("Make the car go!"), procura o ursinho nos baús e responde "Can you say ball?".
+3. **O Laboratório das Cores** (red, blue, yellow, green e pink). Ela arrasta a tinta até o carrinho cinza ("Make it red!"), pinta a bola ("Paint the ball blue!"), faz "Find the yellow toy!" e responde "What color?" (ou toca no pote da cor).
+
+Depois vêm os níveis com a bolha mágica: Floresta (animais e selva), Minha Escola, Minha Casa e Mais cores.
+
+**Regras de cada aula:**
+- Toda fala tem uma alternativa de toque e o botão **Pular**. Sem microfone, a aula vai até o fim.
+- O erro recebe "Try again!". Depois de 2 erros, o Benjamin voa para perto da resposta certa e ela brilha.
+- O fim de cada aula, e um momento no meio dela, têm a **cama elástica dourada**: 3 pulos, o último com cambalhota, e o Benjamin volta ao voo.
+- O progresso é salvo por palavra: toque, compreensão de comando, tentativa de fala e revisão.
 
 ### Voz própria do Benjamin (opcional)
 Por padrão, o Benjamin usa a voz natural do Google (Puck), com sotaque de Brasília. Para usar uma voz infantil própria pela ElevenLabs, criada com autorização e consentimento dos pais, coloque na Vercel:

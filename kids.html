@@ -11,6 +11,7 @@
 <link rel="apple-touch-icon" href="/icon-512.png">
 <link rel="icon" href="/icon-192.png">
 <title>Destrava Kids</title>
+<script src="/art.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap">
 <style>
@@ -23,7 +24,7 @@
   --violet:#8B5CFF; --coin:#FFC21A; --sky:#BFE9FF;
   --font:"Fredoka", "Avenir Next Rounded", "Arial Rounded MT Bold", system-ui, sans-serif;
   --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px);
-  --camW:min(54vw,300px); --camH:calc(var(--camW) * 4 / 3);
+  --camW:min(46vw,250px); --camH:calc(var(--camW) * .92);
   color-scheme:light;
 }
 [hidden]{display:none!important}
@@ -103,70 +104,69 @@ img{max-width:100%}
 /* HUD */
 .ahud{position:absolute;left:0;right:0;top:0;z-index:20;display:flex;align-items:center;gap:8px;padding-top:calc(var(--safe-t) + 10px)}
 .words{flex:1;display:flex;justify-content:center;gap:6px;min-width:0}
-.words i{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.6);display:grid;place-items:center;font-style:normal;font-size:18px;border:3px solid rgba(255,255,255,.9)}
+.words i{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.6);display:grid;place-items:center;font-style:normal;font-size:18px;font-weight:700;color:#fff;border:3px solid rgba(255,255,255,.9);padding:3px;--es:20px}
 .words i.now{background:#fff;border-color:var(--sun);box-shadow:0 0 0 3px rgba(255,210,31,.5)}
 .words i.ok{background:var(--good);border-color:#fff}
+.cam{display:none}
 
-/* HeroCharacter — close-up camera window */
-.cam{position:absolute;z-index:12;left:max(14px,env(safe-area-inset-left,0px));top:calc(var(--safe-t) + 62px);width:var(--camW);height:var(--camH);border-radius:30px;padding:5px;background:linear-gradient(160deg,#FFF3A8,#FFC400 45%,#E09A00);box-shadow:0 10px 0 rgba(120,80,0,.25),0 0 0 4px rgba(255,255,255,.7);transition:width .55s cubic-bezier(.3,1.3,.5,1),height .55s cubic-bezier(.3,1.3,.5,1),top .55s,left .55s,opacity .4s,transform .55s cubic-bezier(.3,1.3,.5,1);transform-origin:20% 20%}
-.cam.small{width:92px;height:122px;border-radius:22px}
-.cam.off{opacity:0;transform:scale(.4)}
-.camin{position:relative;width:100%;height:100%;border-radius:25px;overflow:hidden;background:#F7C948}
-.cam.small .camin{border-radius:18px}
-.camart{position:absolute;inset:0;transform-origin:50% 60%;will-change:transform}
-.camart .pose{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .28s}
-.camart .lid{position:absolute;border-radius:50%;transform:scaleY(0);transform-origin:50% 0;pointer-events:none}
-.camart .mouth{position:absolute;overflow:hidden;transform-origin:50% 0;pointer-events:none;border-radius:30% 30% 45% 45%}
-.cam .state{position:absolute;right:8px;bottom:8px;background:#fff;border-radius:999px;padding:3px 10px;font-size:13px;font-weight:700;box-shadow:0 3px 0 rgba(0,0,0,.12)}
-.cam.small .state{display:none}
+/* illustrations (art.js) */
+.art{width:100%;height:100%;display:block;overflow:visible}
+.art-emoji{display:grid;place-items:center;font-size:var(--es,64px);line-height:1}
 
-/* speech bubble beside the camera */
-.sbubble{position:absolute;z-index:13;left:max(14px,env(safe-area-inset-left,0px));right:max(14px,env(safe-area-inset-right,0px));top:calc(var(--safe-t) + 82px + var(--camH));text-align:center;background:#fff;border-radius:22px;padding:10px 12px;box-shadow:0 5px 0 rgba(0,0,0,.1);transition:left .55s,top .55s;animation:pop .35s both}
-.sbubble::before{content:"";position:absolute;left:calc(var(--camW) * .45);top:-11px;border:11px solid transparent;border-bottom-color:#fff;border-top:0}
-#adv.play .sbubble{text-align:left}
-#adv.play .sbubble::before{left:-11px;top:26px;border:11px solid transparent;border-right-color:#fff;border-left:0}
-.sbubble b{display:block;font-size:22px;line-height:1.15}
-.sbubble b em{font-style:normal;color:#F06A00}
-.sbubble small{display:block;font-size:14px;color:var(--muted);font-weight:600;margin-top:2px}
-#adv.play .sbubble{left:118px;top:calc(var(--safe-t) + 68px)}
+/* subtitle: one short line at the top */
+.sbubble{position:absolute;z-index:13;left:max(14px,env(safe-area-inset-left,0px));right:max(14px,env(safe-area-inset-right,0px));top:calc(var(--safe-t) + 62px);text-align:center;background:rgba(255,255,255,.95);border-radius:22px;padding:8px 12px;box-shadow:0 5px 0 rgba(0,0,0,.1);animation:pop .35s both}
+.sbubble b{display:flex;align-items:center;justify-content:center;gap:8px;font-size:24px;line-height:1.15}
+.sbubble .subart{width:44px;height:44px;flex:none;--es:34px}
+.sbubble small{display:block;font-size:14px;color:var(--muted);font-weight:600}
+.sbubble small:empty{display:none}
 
-/* the word card (what Benjamin is showing) */
-.wcard{position:absolute;z-index:14;right:max(12px,env(safe-area-inset-right,0px));top:calc(var(--safe-t) + 62px + var(--camH) * .12);width:min(38vw,176px);background:#fff;border-radius:24px;padding:10px 8px 8px;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:0 8px 0 rgba(0,0,0,.12);animation:cardIn .55s cubic-bezier(.3,1.4,.5,1) both;rotate:4deg}
-@keyframes cardIn{from{transform:translateY(40px) scale(.4) rotate(-20deg);opacity:0}to{transform:none;opacity:1}}
-.wcard .e{font-size:min(20vw,88px);line-height:1.05;animation:float 2.6s ease-in-out infinite}
-.wcard .w{display:flex;align-items:center;gap:6px;font-size:30px;font-weight:700}
-.wcard .w button{font-size:22px}
-.wcard .p{font-size:14px;color:var(--muted);font-weight:600}
+/* the stage: where each word is discovered */
+.stage{position:absolute;z-index:11;left:0;right:0;top:calc(var(--safe-t) + 128px);bottom:calc(var(--safe-b) + 176px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;pointer-events:none}
+.stage > *{pointer-events:auto}
+.mystery{width:min(56vw,240px);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.98) 0 7%,rgba(255,255,255,.45) 8% 30%,rgba(140,210,255,.5) 58%,rgba(90,160,255,.75) 88%,rgba(255,170,220,.8) 100%);box-shadow:inset 0 0 0 5px rgba(255,255,255,.9),inset -14px -18px 30px rgba(255,120,200,.25),0 12px 30px rgba(40,110,200,.3);animation:mfloat 2.6s ease-in-out infinite}
+.mystery .q{font-size:110px;font-weight:700;line-height:1;color:#FFD21F;-webkit-text-stroke:4px #3B2A20;text-shadow:0 5px 0 #3B2A20;paint-order:stroke fill;animation:qpulse 1.3s ease-in-out infinite}
+.mystery.hint{box-shadow:inset 0 0 0 4px rgba(255,255,255,.85),0 0 0 0 rgba(255,210,31,.8);animation:mfloat 2.6s ease-in-out infinite,glow 1.1s ease-out infinite}
+@keyframes mfloat{0%,100%{translate:0 0}50%{translate:0 -14px}}
+@keyframes qpulse{50%{scale:1.12}}
+@keyframes glow{from{box-shadow:inset 0 0 0 4px rgba(255,255,255,.85),0 0 0 0 rgba(255,210,31,.9)}to{box-shadow:inset 0 0 0 4px rgba(255,255,255,.85),0 0 0 36px rgba(255,210,31,0)}}
+.bigart{width:min(66vw,290px);aspect-ratio:1;animation:reveal .6s cubic-bezier(.3,1.6,.5,1) both;filter:drop-shadow(0 6px 0 rgba(0,0,0,.08));--es:min(44vw,190px)}
+.bigart > .art{animation:idle 2.8s ease-in-out infinite}
+.bigart.wiggle{animation:wiggle .6s}
+@keyframes reveal{from{scale:.2;rotate:-20deg;opacity:0}to{scale:1;rotate:0deg;opacity:1}}
+@keyframes wiggle{20%{rotate:-8deg;scale:1.06}50%{rotate:7deg;scale:1.1}80%{rotate:-4deg}}
+@keyframes idle{50%{translate:0 -6px;scale:1.02}}
+.wlabel{display:flex;flex-direction:column;align-items:center;background:#fff;border-radius:20px;padding:4px 20px 6px;box-shadow:0 5px 0 rgba(0,0,0,.1);animation:pop .4s .25s both}
+.wlabel b{font-size:36px;line-height:1.05;letter-spacing:.02em}
+.wlabel small{font-size:15px;color:var(--muted);font-weight:600}
 
-/* play field inside the scene */
-.field{position:absolute;z-index:11;left:0;right:0;top:calc(var(--safe-t) + 170px + var(--camH));bottom:calc(var(--safe-b) + 150px)}
-#adv.play .field{top:calc(var(--safe-t) + 196px);bottom:calc(var(--safe-b) + 20px)}
-.spot{position:absolute;width:var(--s,104px);height:var(--s,104px);display:grid;place-items:center;font-size:calc(var(--s,104px) * .68);border-radius:50%;background:radial-gradient(circle at 50% 60%,rgba(255,255,255,.85) 0 52%,rgba(255,255,255,0) 70%);transform:translate(-50%,-50%);animation:peek .6s cubic-bezier(.3,1.5,.5,1) both}
-.spot > span{display:inline-block;animation:bob 2.2s ease-in-out infinite alternate}
-@keyframes peek{from{transform:translate(-50%,10%) scale(.2);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
-@keyframes bob{from{transform:translateY(-5px)}to{transform:translateY(5px)}}
-.spot.right{background:radial-gradient(circle,rgba(34,197,94,.5) 0 55%,rgba(34,197,94,0) 72%);animation:win .5s}
-@keyframes win{50%{transform:translate(-50%,-50%) scale(1.25)}}
-.spot.gone{transition:opacity .3s,transform .3s;opacity:0;transform:translate(-50%,-80%) scale(.6)}
+/* play field (rising bubbles, shadows) */
+.field{position:absolute;z-index:11;left:0;right:0;top:calc(var(--safe-t) + 124px);bottom:0;overflow:hidden;pointer-events:none}
+.field > *{pointer-events:auto}
+.field .shadows,.field .pieces{pointer-events:none}.field .shadow,.field .piece{pointer-events:auto}
+.bub{position:absolute;left:var(--x);bottom:calc(-1 * var(--s));width:var(--s);height:var(--s);margin-left:calc(var(--s) / -2);border-radius:50%;padding:calc(var(--s) * .16);background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.95) 0 7%,rgba(255,255,255,.3) 8% 34%,rgba(170,225,255,.3) 62%,rgba(110,185,255,.6) 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.9),0 6px 16px rgba(40,110,200,.18);animation:rise var(--d,7s) linear forwards;touch-action:none}
+.bub.balloon{background:none;box-shadow:none;padding:0;width:calc(var(--s) * 1.1);height:calc(var(--s) * 1.25)}
+.bub .in{display:block;width:100%;height:100%;pointer-events:none;--es:calc(var(--s) * .5)}
+.bub .in.nope{animation:nope .45s}
+@keyframes rise{0%{transform:translate(0,0)}25%{transform:translate(16px,-30vh)}50%{transform:translate(-16px,-60vh)}75%{transform:translate(12px,-90vh)}100%{transform:translate(0,-120vh)}}
+@keyframes bpop{to{scale:1.6;opacity:0}}
+@keyframes nope{20%{rotate:-14deg}50%{rotate:12deg}80%{rotate:-6deg}}
 .shake{animation:shake .45s}
 @keyframes shake{20%{translate:-8px 0}40%{translate:8px 0}60%{translate:-5px 0}80%{translate:5px 0}}
-.bush{position:absolute;font-size:64px;line-height:1;transform:translate(-50%,-30%);pointer-events:none;filter:drop-shadow(0 4px 0 rgba(0,40,0,.15))}
-/* shadows game */
-.shadows{position:absolute;left:0;right:0;top:4%;display:flex;justify-content:center;gap:12px}
-.shadow{width:min(26vw,104px);aspect-ratio:1;border-radius:24px;background:rgba(255,255,255,.55);border:3px dashed rgba(34,25,47,.25);display:grid;place-items:center;font-size:min(16vw,64px)}
-.shadow > span{filter:brightness(0) opacity(.55)}
+.shadows{position:absolute;left:0;right:0;top:12%;display:flex;justify-content:center;gap:12px}
+.shadow{width:min(27vw,112px);aspect-ratio:1;border-radius:26px;background:rgba(255,255,255,.55);border:3px dashed rgba(34,25,47,.25);display:grid;place-items:center;padding:10px;--es:min(16vw,64px)}
+.shadow .art{filter:brightness(0) opacity(.45)}
 .shadow.done{border-style:solid;border-color:var(--good);background:rgba(220,252,231,.9)}
-.shadow.done > span{filter:none}
+.shadow.done .art{filter:none}
 .shadow.hot{border-color:var(--sun-deep);background:rgba(255,246,200,.9)}
-.pieces{position:absolute;left:0;right:0;bottom:6%;display:flex;justify-content:center;gap:12px}
-.piece{width:min(24vw,96px);aspect-ratio:1;border-radius:22px;background:#fff;display:grid;place-items:center;font-size:min(14vw,58px);box-shadow:0 6px 0 rgba(0,0,0,.14);touch-action:none;position:relative;z-index:2}
+.pieces{position:absolute;left:0;right:0;bottom:calc(var(--safe-b) + 40px);display:flex;justify-content:center;gap:12px}
+.piece{width:min(26vw,108px);aspect-ratio:1;border-radius:24px;background:#fff;display:grid;place-items:center;padding:10px;box-shadow:0 6px 0 rgba(0,0,0,.14);touch-action:none;position:relative;z-index:2;--es:min(14vw,58px)}
+.piece .art{pointer-events:none}
 .piece.drag{z-index:30;box-shadow:0 14px 20px rgba(0,0,0,.2);transition:none}
 .piece.sel{outline:4px solid var(--sun-deep)}
 .piece.home{transition:transform .3s}
 
 /* VoiceInteraction — microphone bar with clear states */
 .micbar{position:absolute;z-index:15;left:0;right:0;bottom:0;padding-bottom:calc(var(--safe-b) + 14px);display:flex;flex-direction:column;align-items:center;gap:6px}
-#adv.play .micbar{display:none}
 .microw{display:flex;align-items:center;justify-content:center;gap:22px}
 .mic{position:relative;width:104px;height:104px;border-radius:50%;background:radial-gradient(circle at 50% 35%,#FFF0A0,#FFD21F 55%,#F2B100);color:var(--ink);display:grid;place-items:center;box-shadow:0 0 0 8px rgba(255,255,255,.55),0 8px 0 var(--sun-deep)}
 .mic svg{width:46px;height:46px;position:relative;z-index:2}
@@ -193,12 +193,12 @@ img{max-width:100%}
 .said{margin-top:2px}
 
 /* FlyingHero — the full-body Benjamin for adventures and celebrations */
-#flyer{position:fixed;left:0;top:0;width:var(--fs,120px);z-index:40;pointer-events:none;will-change:transform;filter:drop-shadow(0 10px 12px rgba(80,50,0,.25))}
+#flyer{position:fixed;left:0;top:0;width:120px;z-index:40;pointer-events:none;will-change:transform;filter:drop-shadow(0 10px 12px rgba(80,50,0,.25))}
 #flyer img{width:100%;display:block}
 #flyer .wear{position:absolute;line-height:1}
-#flyer .wear.crown{left:50%;top:-14%;font-size:calc(var(--fs,120px)*.3)}
-#flyer .wear.glasses{left:54%;top:22%;font-size:calc(var(--fs,120px)*.2)}
-#flyer .carry{position:absolute;left:62%;top:-30%;font-size:calc(var(--fs,120px)*.7);filter:drop-shadow(0 0 18px #FFE680)}
+#flyer .wear.crown{left:42%;top:-14%;font-size:34px}
+#flyer .wear.glasses{left:54%;top:22%;font-size:24px}
+#flyer .carry{position:absolute;left:55%;top:-40%;font-size:90px;filter:drop-shadow(0 0 18px #FFE680)}
 .trailbit{position:fixed;z-index:39;pointer-events:none;font-size:18px;animation:trailfade 1.3s ease-out forwards}
 @keyframes trailfade{from{opacity:.85;transform:translate(-50%,-50%) scale(1)}to{opacity:0;transform:translate(-50%,-50%) translateY(14px) scale(.4)}}
 
@@ -223,7 +223,7 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
 .over h2{margin:0;font-size:22px}
 .over p{margin:0;font-size:17px;color:var(--muted);font-weight:600}
 .learned{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;background:#fff;border-radius:22px;padding:12px;box-shadow:0 6px 0 rgba(0,0,0,.1);max-width:420px}
-.learned .lw{display:flex;flex-direction:column;align-items:center;font-size:40px;line-height:1.1;position:relative;min-width:58px}
+.learned .lw{display:flex;flex-direction:column;align-items:center;font-size:15px;line-height:1.1;position:relative;min-width:58px}
 .learned .lw b{font-size:15px}
 .learned .lw i{position:absolute;right:-2px;top:-4px;font-style:normal;font-size:16px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--good);color:#fff}
 .learned .lw i.half{background:var(--warn)}
@@ -280,6 +280,67 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
 .mbar{height:10px;border-radius:999px;background:#EFE8D3;overflow:hidden;grid-column:2/4}
 .mbar i{display:block;height:100%;background:var(--good);border-radius:999px}
 .gate{font-size:30px;font-weight:700}
+.lvl .ic{width:36px;height:36px;display:grid;place-items:center;--es:26px;margin:auto}
+.stk .sa{width:70%;height:62%;--es:30px}
+.learned .lw .la{width:58px;height:58px;--es:40px}
+.introcard .ic{width:110px;height:110px;--es:70px}
+
+/* image scenes (BackgroundLayer) */
+.bgimg{position:absolute;inset:-12px;background:center/cover no-repeat;filter:blur(2px) saturate(1.1)}
+.bgveil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,0) 30%,rgba(255,255,255,0) 70%,rgba(255,255,255,.3))}
+.art-img{object-fit:contain;-webkit-user-drag:none;user-select:none}
+/* lessons (ActivityLayer) */
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;width:min(92vw,420px);justify-items:center}
+.choices.n1{grid-template-columns:1fr}
+.choices.n3{grid-template-columns:repeat(2,minmax(0,1fr))}
+.choices.n3 > :last-child{grid-column:1/-1}
+.pick{position:relative;width:100%;max-width:170px;aspect-ratio:1;border-radius:32px;padding:8px;background:radial-gradient(circle at 50% 55%,rgba(255,255,255,.95) 0 58%,rgba(255,255,255,.55) 72%,rgba(255,255,255,0) 74%);animation:peek2 .5s cubic-bezier(.3,1.5,.5,1) both}
+.choices.n1 .pick{max-width:230px}
+.choices.n3 .pick{max-width:150px}
+@keyframes peek2{from{scale:.3;opacity:0}to{scale:1;opacity:1}}
+.pick.right{background:radial-gradient(circle at 50% 55%,rgba(220,252,231,.98) 0 58%,rgba(34,197,94,.45) 72%,rgba(34,197,94,0) 74%)}
+.glow{animation:glowring 1.1s ease-out infinite!important}
+@keyframes glowring{from{box-shadow:0 0 0 0 rgba(255,200,0,.9)}to{box-shadow:0 0 0 26px rgba(255,200,0,0)}}
+.r-wave{animation:rwave .9s}
+@keyframes rwave{15%{rotate:-10deg}35%{rotate:10deg}55%{rotate:-8deg}75%{rotate:6deg}}
+.r-bounce{animation:rbounce .9s}
+@keyframes rbounce{20%{translate:0 -60px;scale:1 1.05}40%{translate:0 0;scale:1.1 .9}60%{translate:0 -30px}80%{translate:0 0;scale:1.05 .95}}
+.r-drive{animation:rdrive 1s ease-in-out}
+@keyframes rdrive{30%{translate:60px 0;rotate:-4deg}60%{translate:-30px 0;rotate:3deg}}
+.r-dance{animation:rdance 1s}
+@keyframes rdance{20%{rotate:-12deg;scale:1.08}40%{rotate:12deg;translate:0 -14px}60%{rotate:-10deg}80%{rotate:8deg;translate:0 -8px}}
+.r-pop{animation:rpop .5s}
+@keyframes rpop{40%{scale:1.18}}
+.zone{position:relative;width:min(58vw,240px);aspect-ratio:1;border-radius:36px;border:4px dashed rgba(59,42,32,.25);background:rgba(255,255,255,.5);display:grid;place-items:center;padding:12px;transition:background .2s,border-color .2s}
+.zone.hot{border-color:var(--sun-deep);background:rgba(255,246,200,.85)}
+.zone.house{width:min(46vw,190px)}
+.zone.canvas{border-style:solid;border-color:rgba(255,255,255,.9);background:rgba(255,255,255,.7)}
+.piece.in-house{transition:transform .6s ease-in,opacity .6s;opacity:0}
+.pieces.big .piece{width:min(28vw,124px)}
+.zone.track{width:min(90vw,380px);aspect-ratio:auto;height:96px;border:5px solid #3B2A20;border-radius:48px;background:#5B5B66;overflow:hidden}
+.zone.track::before{content:"";position:absolute;left:24px;right:70px;top:50%;border-top:6px dashed #FFE066;translate:0 -3px}
+.zone.track.hot{background:#6E6E7A}
+.track .flag{position:absolute;right:18px;top:16px;width:34px;height:56px;background:conic-gradient(#fff 25%,#222 0 50%,#fff 0 75%,#222 0) 0 0/14px 14px;border:3px solid #3B2A20;border-radius:4px}
+.racer{position:absolute;left:0;top:-6px;width:104px;height:104px;animation:race 1.3s ease-in forwards}
+@keyframes race{to{translate:calc(min(90vw,380px) - 60px) 0}}
+.tintbox{isolation:isolate}
+.tintbox .art-img{filter:grayscale(1) brightness(1.15) contrast(1.05);transition:filter .7s}
+.tintbox.painted .art-img{filter:grayscale(1) brightness(1.5) contrast(1.15)}
+.tintbox .tint{position:absolute;inset:8px;background:var(--c);mix-blend-mode:multiply;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat;opacity:0;transition:opacity .7s;pointer-events:none}
+.tintbox.painted .tint{opacity:1}
+.bigart.tintbox .tint{inset:0}
+.chestbox.open{background:radial-gradient(circle at 50% 55%,rgba(255,246,200,.98) 0 58%,rgba(255,200,0,.4) 72%,rgba(255,200,0,0) 74%)}
+.altrow{position:absolute;left:0;right:0;bottom:calc(var(--safe-b) + 190px);display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:0 12px}
+.altbtn{display:flex;align-items:center;gap:6px;background:#fff;border-radius:999px;padding:10px 16px;font-weight:700;font-size:20px;box-shadow:0 5px 0 rgba(0,0,0,.12)}
+.altbtn.img{width:84px;height:84px;padding:6px;border-radius:24px;justify-content:center}
+.altbtn .spk{font-size:18px}
+.tramp{position:fixed;left:50%;bottom:calc(var(--safe-b) + 150px);width:230px;translate:-50% 0;z-index:39;pointer-events:none;animation:tin .35s cubic-bezier(.3,1.5,.5,1) both;filter:drop-shadow(0 8px 6px rgba(0,0,0,.2))}
+.tramp svg{display:block;width:100%}
+.tramp.squash{animation:squash .3s}
+.tramp.out{animation:tout .35s forwards}
+@keyframes tin{from{scale:.2;opacity:0}to{scale:1;opacity:1}}
+@keyframes tout{to{scale:.2;opacity:0}}
+@keyframes squash{40%{scale:1.06 .82}}
 @media (max-width:370px){.htop .logo{font-size:36px}.tile{font-size:11px}.wcard .w{font-size:24px}.sbubble b{font-size:18px}}
 @media (prefers-reduced-motion: reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important;transition:none!important}}
 </style>
@@ -323,16 +384,8 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
     <div class="words" id="wordDots"></div>
     <span class="chip" id="coinChip">🪙 <span id="coinCount">0</span></span>
   </div>
-  <div class="cam off" id="cam">
-    <div class="camin"><div class="camart" id="camart">
-      <img class="pose" id="poseA" alt=""><img class="pose" id="poseB" alt="" style="opacity:0">
-      <div class="lid" id="lidL"></div><div class="lid" id="lidR"></div>
-      <div class="mouth" id="mouth"></div>
-    </div></div>
-    <span class="state" id="camState" hidden></span>
-  </div>
   <div class="sbubble" id="bubble" hidden><b id="bubbleT"></b><small id="bubbleS"></small></div>
-  <div class="wcard" id="card" hidden></div>
+  <div class="stage" id="stage"></div>
   <div class="field" id="field"></div>
   <div class="micbar" id="micbar">
     <div class="microw">
@@ -341,7 +394,7 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
       <button class="side" id="helpBtn" aria-label="Ajuda">?</button>
     </div>
     <div class="miccap" id="micCap"></div>
-    <button class="btn white small said" id="saidBtn" hidden>Eu falei! ✅</button>
+    <div class="row2"><button class="btn white small said" id="saidBtn" hidden>Eu falei! ✅</button><button class="btn white small said" id="skipBtn" hidden>Pular ➜</button></div>
   </div>
 </section>
 
@@ -350,6 +403,7 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
 <div class="goldsky" id="goldsky"></div>
 <div class="yeah" id="yeah"></div>
 <div class="flashok" id="flashok"></div>
+<div class="tramp" id="tramp" hidden aria-hidden="true"><svg viewBox="0 0 240 96"><path d="M34 48 L20 92 M206 48 L220 92 M84 62 L78 94 M156 62 L162 94" stroke="#B8860B" stroke-width="9" stroke-linecap="round"/><ellipse cx="120" cy="46" rx="112" ry="30" fill="#FFD21F" stroke="#3B2A20" stroke-width="5"/><ellipse cx="120" cy="44" rx="94" ry="20" fill="#3FA2FF" stroke="#2A6FC0" stroke-width="3"/><path d="M60 40 h20 M110 36 h20 M160 40 h20" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".6"/></svg></div>
 <canvas id="fx"></canvas>
 <div class="sheet" id="sheet" hidden><div class="panel gut" id="sheetPanel"></div></div>
 
@@ -367,32 +421,29 @@ const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
    CONTENT — one progressive journey, world by world (existing content reorganized)
    ===================================================================== */
 const WORLDS = [
-  { id:"forest", name:"Floresta Encantada", icon:"🌳", scene:"forest", levels:[
-    { id:"meet",    title:"Conhecendo o Benjamin", icon:"👋", goal:"Cumprimentar e fazer amizade", words:[["hello","olá","👋"],["friend","amigo","🤗"],["yes","sim","👍"],["bye","tchau","🙋"]] },
-    { id:"first",   title:"Primeiras palavras",   icon:"🙏", goal:"Palavras gentis e sentimentos", words:[["thank you","obrigado","🙏"],["please","por favor","🥺"],["happy","feliz","😀"],["sad","triste","😢"]] },
-    { id:"animals", title:"Animais",              icon:"🐶", goal:"Os animais da floresta", words:[["dog","cachorro","🐶"],["cat","gato","🐱"],["bird","pássaro","🐦"],["fish","peixe","🐟"],["duck","pato","🦆"]] },
-    { id:"colors",  title:"Cores",                icon:"🎨", goal:"As cores do arco-íris", words:[["red","vermelho","🟥"],["blue","azul","🟦"],["yellow","amarelo","🟨"],["green","verde","🟩"],["orange","laranja","🟧"]] },
+  { id:"family-house", name:"Casa da Família", icon:"🏡", scene:"house-img", levels:[
+    { id:"aula-family", kind:"lesson", script:"family", scene:"house-img", title:"A Casa da Família", icon:"grandma", goal:"Mom, Dad, Grandma, Grandpa", core:4, words:[["mom","mamãe","mom"],["dad","papai","dad"],["grandma","vovó","grandma"],["grandpa","vovô","grandpa"],["baby","bebê","baby"]] },
+    { id:"aula-toys",   kind:"lesson", script:"toys",   scene:"room",      title:"O Quarto dos Brinquedos", icon:"teddy", goal:"Ball, Car, Teddy Bear", core:3, words:[["ball","bola","ball"],["car","carro","car"],["teddy bear","ursinho","teddy"],["doll","boneca","doll"],["bike","bicicleta","bike"]] },
+    { id:"aula-colors", kind:"lesson", script:"colors", scene:"lab",       title:"O Laboratório das Cores", icon:"paint-red", goal:"Red, Blue, Yellow, Green", core:4, words:[["red","vermelho","paint-red"],["blue","azul","paint-blue"],["yellow","amarelo","paint-yellow"],["green","verde","paint-green"],["pink","rosa","paint-pink"]] },
   ]},
-  { id:"house", name:"Casa Mágica", icon:"🏠", scene:"house", levels:[
-    { id:"home",    title:"Objetos da casa", icon:"🛏️", goal:"As coisas da casa", words:[["bed","cama","🛏️"],["chair","cadeira","🪑"],["door","porta","🚪"],["lamp","luminária","💡"],["book","livro","📖"]] },
-    { id:"family",  title:"Família",  icon:"👨‍👩‍👧", goal:"Quem mora comigo", words:[["mom","mamãe","👩"],["dad","papai","👨"],["baby","bebê","👶"],["brother","irmão","👦"],["sister","irmã","👧"]] },
-    { id:"body",    title:"Corpo",    icon:"✋", goal:"As partes do corpo", words:[["hand","mão","✋"],["eye","olho","👁️"],["nose","nariz","👃"],["mouth","boca","👄"],["foot","pé","🦶"]] },
-    { id:"toys",    title:"Brinquedos", icon:"🧸", goal:"Hora de brincar", words:[["ball","bola","⚽"],["car","carro","🚗"],["teddy bear","ursinho","🧸"],["kite","pipa","🪁"],["robot","robô","🤖"]] },
-    { id:"numbers", title:"Números",  icon:"🔢", goal:"Contar até cinco", words:[["one","um","1️⃣"],["two","dois","2️⃣"],["three","três","3️⃣"],["four","quatro","4️⃣"],["five","cinco","5️⃣"]] },
+  { id:"forest", name:"Floresta Encantada", icon:"🌳", scene:"forest-img", levels:[
+    { id:"animals", title:"Animais",          icon:"dog", goal:"Os animais da floresta", words:[["dog","cachorro","dog"],["cat","gato","cat"],["bird","pássaro","parrot"],["duck","pato","duck"],["fish","peixe","fish"]] },
+    { id:"jungle",  title:"Animais da selva", icon:"lion", goal:"Os bichos grandes", words:[["lion","leão","lion"],["elephant","elefante","elephant"],["monkey","macaco","monkey"],["tiger","tigre","tiger"],["frog","sapo","frog"]] },
+    { id:"meet",    title:"Olá, amigo!",      icon:"hello", goal:"Cumprimentar e fazer amizade", words:[["hello","olá","hello"],["friend","amigo","friend"],["yes","sim","yes"],["bye","tchau","bye"]] },
+    { id:"first",   title:"Sentimentos",      icon:"happy", goal:"Palavras gentis e sentimentos", words:[["happy","feliz","happy"],["sad","triste","sad"],["thank you","obrigado","thanks"],["please","por favor","please"]] },
   ]},
-  { id:"city", name:"Cidade Alegre", icon:"🏙️", scene:"city", levels:[
-    { id:"food",    title:"Comidas",  icon:"🍕", goal:"No restaurante", words:[["pizza","pizza","🍕"],["milk","leite","🥛"],["bread","pão","🍞"],["cake","bolo","🍰"],["water","água","💧"]] },
-    { id:"fruits",  title:"Frutas",   icon:"🍎", goal:"Na feira", words:[["apple","maçã","🍎"],["banana","banana","🍌"],["grapes","uva","🍇"],["strawberry","morango","🍓"],["orange","laranja","🍊"]] },
-    { id:"places",  title:"Lugares",  icon:"🏫", goal:"Passeando pela cidade", words:[["school","escola","🏫"],["house","casa","🏠"],["park","parque","🛝"],["beach","praia","🏖️"],["hospital","hospital","🏥"]] },
-    { id:"clothes", title:"Roupas",   icon:"👕", goal:"O que eu visto", words:[["shirt","camiseta","👕"],["shoes","sapatos","👟"],["hat","chapéu","🧢"],["dress","vestido","👗"],["socks","meias","🧦"]] },
-    { id:"actions", title:"Ações",    icon:"🏃", goal:"O que eu faço", words:[["run","correr","🏃"],["jump","pular","🦘"],["sleep","dormir","😴"],["eat","comer","😋"],["swim","nadar","🏊"]] },
+  { id:"school", name:"Minha Escola", icon:"🏫", scene:"school-img", levels:[
+    { id:"school1", title:"Minha mochila", icon:"bag", goal:"Bag, Book, Pencil", words:[["bag","mochila","bag"],["book","livro","book"],["pencil","lápis","pencil"],["crayon","giz de cera","crayon"],["eraser","borracha","eraser"]] },
+    { id:"school2", title:"Na sala de aula", icon:"scissors", goal:"Notebook, Ruler, Scissors", words:[["notebook","caderno","notebook"],["ruler","régua","ruler"],["scissors","tesoura","scissors"],["pencil case","estojo","pencilcase"]] },
+    { id:"numbers", title:"Números", icon:"num:3", goal:"Contar até cinco", words:[["one","um","num:1"],["two","dois","num:2"],["three","três","num:3"],["four","quatro","num:4"],["five","cinco","num:5"]] },
   ]},
-  { id:"travel", name:"Viagem pelo Mundo", icon:"✈️", scene:"travel", levels:[
-    { id:"transport", title:"Transportes", icon:"✈️", goal:"Como a gente viaja", words:[["plane","avião","✈️"],["bus","ônibus","🚌"],["boat","barco","⛵"],["train","trem","🚆"],["bike","bicicleta","🚲"]] },
-    { id:"weather", title:"Tempo",    icon:"🌦️", goal:"Como está o dia", words:[["sun","sol","☀️"],["rain","chuva","🌧️"],["snow","neve","❄️"],["cloud","nuvem","☁️"],["rainbow","arco-íris","🌈"]] },
-    { id:"wild",    title:"Selva",    icon:"🦁", goal:"Os animais da selva", words:[["lion","leão","🦁"],["monkey","macaco","🐒"],["elephant","elefante","🐘"],["snake","cobra","🐍"],["tiger","tigre","🐯"]] },
-    { id:"phrases", title:"Pequenas frases", icon:"✨", goal:"Frases do dia a dia", words:[["good morning","bom dia","🌅"],["good night","boa noite","🌙"],["I love you","eu te amo","❤️"],["let's go","vamos lá","🚀"],["I'm hungry","estou com fome","😋"]] },
-    { id:"talk",    title:"Conversas simples", icon:"💬", goal:"Bater um papo em inglês", words:[["how are you","como você está","🙂"],["I'm fine","estou bem","👍"],["what's your name","qual é o seu nome","🤔"],["my name is","meu nome é","😊"],["nice to meet you","prazer em te conhecer","🤝"]] },
+  { id:"house", name:"Minha Casa", icon:"🏠", scene:"room", levels:[
+    { id:"home",    title:"Objetos da casa", icon:"bed", goal:"Door, Bed, Chair, Table, Cup", words:[["door","porta","door"],["bed","cama","bed"],["chair","cadeira","chair"],["table","mesa","table"],["cup","xícara","cup"]] },
+    { id:"home2",   title:"Na sala e na cozinha", icon:"sofa", goal:"Sofa, Lamp, TV, Fridge, Stove", words:[["sofa","sofá","sofa"],["lamp","luminária","lamp"],["TV","televisão","tv"],["fridge","geladeira","fridge"],["stove","fogão","stove"]] },
+    { id:"family2", title:"Minha família toda", icon:"family", goal:"Sister, Brother, Baby, Family", words:[["sister","irmã","sister"],["brother","irmão","brother"],["baby","bebê","baby"],["family","família","family"]] },
+    { id:"toys2",   title:"Mais brinquedos", icon:"train", goal:"Doll, Bike, Train, Robot, Kite", words:[["doll","boneca","doll"],["bike","bicicleta","bike"],["train","trem","train"],["robot","robô","robot"],["kite","pipa","kite"]] },
+    { id:"colors2", title:"Mais cores", icon:"paint-purple", goal:"Purple, Orange, Black, White, Brown", words:[["purple","roxo","paint-purple"],["orange","laranja","paint-orange"],["black","preto","paint-black"],["white","branco","paint-white"],["brown","marrom","paint-brown"]] },
+    { id:"body",    title:"Meu corpo", icon:"hand", goal:"As partes do corpo", words:[["hand","mão","hand"],["eye","olho","eye"],["nose","nariz","nose"],["mouth","boca","mouth"],["foot","pé","foot"]] },
   ]},
 ];
 const LEVELS = WORLDS.flatMap((w, wi) => w.levels.map(l => Object.assign({ world:wi }, l)));
@@ -412,8 +463,9 @@ const SHOP = [
   { id:"crown",   e:"👑", name:"Coroa de campeão",   price:120, kind:"wear" },
 ];
 const LINES = {
-  yeah:  ["Yeahhh! Você conseguiu!","Uhuul! Perfeito!","Isso! Mandou muito bem!","Uau! Que inglês lindo!"],
-  yeahMini: ["Yeahhh! Muito bem, meu amigo!","Uau! Você conseguiu! Que orgulho!","Isso mesmo! Que lindo!"],
+  yeah:  ["Yeahhh!","Uhuul!","Isso aí!","Mandou bem!"],
+  yeahMini: ["Yeahhh! Muito bem!","Uau! Isso!","Uhuul! Que lindo!"],
+  soft:  ["Boa!","Isso aí!","Muito bem!"],
   tap:   ["Isso!","Muito bem!","Achou!","Boa!"],
 };
 
@@ -421,12 +473,13 @@ const LINES = {
    ProgressManager — everything saved on this device only (minimal data)
    ===================================================================== */
 const Progress = (() => {
-  const blank = () => ({ v:4, name:"", age:"", pos:{ level:0, word:0 }, done:{}, words:{}, coins:0, owned:[], trail:"", wear:"", music:true, voice:"natural", minutes:0, streak:0, lastDay:null, daily:null, medals:[], seenAlbum:0 });
+  const blank = () => ({ v:5, name:"", age:"", pos:{ level:0, word:0 }, done:{}, words:{}, coins:0, owned:[], trail:"", wear:"", music:true, voice:"natural", minutes:0, streak:0, lastDay:null, daily:null, medals:[], seenAlbum:0 });
   let K = blank();
   try {
     const s = JSON.parse(localStorage.getItem("destrava_kids") || "null");
     if (s){
-      if (s.v === 4) K = Object.assign(blank(), s);
+      if (s.v === 5) K = Object.assign(blank(), s);
+      else if (s.v === 4){ K = Object.assign(blank(), s); K.v = 5; K.pos = { level: Math.max(0, LEVELS.findIndex(l => !K.done[l.id])), word: 0 }; }
       else { // migrate the previous version: keep the child's name, age, coins and powers
         ["name","age","coins","owned","trail","wear","music","streak","lastDay"].forEach(k => { if (s[k] != null) K[k] = s[k]; });
         if (!AGES[K.age]) K.age = "";
@@ -471,11 +524,12 @@ const Learning = (() => {
     seen(en){ rec(en).seen++; },
     said(en, kind){ const r = rec(en); if (kind === "exact") r.exact++; else if (kind === "approx") r.approx++; else if (kind === "attempt") r.tries++; else if (kind === "part") r.part++; },
     tapped(en, ok){ const r = rec(en); ok ? r.tapOk++ : r.tapBad++; },
+    cmd(en, ok){ const r = rec(en); ok ? (r.cmdOk = (r.cmdOk || 0) + 1) : (r.cmdBad = (r.cmdBad || 0) + 1); },   // understood a command (find / bring / paint)
     /* 0 new · 1 participated · 2 tried · 3 approximate · 4 consolidated */
     level(en){
       const r = K().words[en]; if (!r) return 0;
       const mini = K().age === "mini";
-      if ((r.exact >= 1 || (mini && r.approx >= 1) || r.approx >= 2) && r.tapOk >= 1) return 4;
+      if ((r.exact >= 1 || (mini && r.approx >= 1) || r.approx >= 2) && r.tapOk + (r.cmdOk || 0) >= 1) return 4;
       if (r.exact + r.approx >= 1) return 3;
       if (r.tries >= 1) return 2;
       if (r.part + r.seen + r.tapOk >= 1) return 1;
@@ -503,7 +557,7 @@ function unlockAudio(){
 }
 ["pointerdown","touchend","keydown"].forEach(ev => document.addEventListener(ev, unlockAudio, { passive:true }));
 const VOICE = "Puck";
-const VOICE_REV = 1; // trocou a voz do Benjamin (ex.: ElevenLabs)? some 1 aqui para renovar o cache
+const VOICE_REV = 2; // trocou a voz do Benjamin (ex.: ElevenLabs)? some 1 aqui para renovar o cache
 async function getVoice(text){
   const url = "/api/tts?s=" + A().style + "&v=" + VOICE + "&r=" + VOICE_REV + "&t=" + encodeURIComponent(text);
   if (memCache.has(url)) return memCache.get(url);
@@ -533,16 +587,32 @@ function playBuf(buf, my){
 let voices = [];
 const loadVoices = () => { try { voices = speechSynthesis.getVoices() || []; } catch(e){} };
 if ("speechSynthesis" in window){ loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
-function deviceSay(text){
+/* device voice (only when the natural voice is unavailable): English parts are read by an English voice,
+   Portuguese parts by a Brazilian one — so "Dad!" is never spelled out letter by letter */
+const EN_EXTRA = "find the bring home who is this where's where what color can you say look at my toys new let's meet family paint make it yes great good job wow try again almost a an toy yeahhh uhuul i love";
+let EN_VOCAB = null;
+function isEnglish(seg){
+  if (!EN_VOCAB){ EN_VOCAB = new Set(EN_EXTRA.split(" ")); LEVELS.forEach(l => l.words.forEach(([en]) => en.toLowerCase().split(" ").forEach(t => EN_VOCAB.add(t)))); }
+  const toks = seg.toLowerCase().replace(/[’']/g, "'").replace(/[^a-z' ]/g, " ").split(/\s+/).filter(Boolean);
+  if (!toks.length || /[ãõáéíóúâêôç]/i.test(seg)) return false;
+  return toks.every(t => EN_VOCAB.has(t) || EN_VOCAB.has(t.replace(/'s$/, "")));
+}
+function pickVoice(lang){
+  const sc = v => (/premium|enhanced|aprimorad|melhorad|natural/i.test(v.name) ? 4 : 0) + (/google|samantha|felipe|daniel|luciana/i.test(v.name) ? 1 : 0);
+  return voices.filter(v => (v.lang || "").toLowerCase().replace("_", "-") === lang).sort((a, b) => sc(b) - sc(a))[0];
+}
+function speakOne(text, lang){
   return new Promise(res => {
-    if (!("speechSynthesis" in window)) return res();
-    const u = new SpeechSynthesisUtterance(text); u.lang = "pt-BR"; u.rate = K().age === "mini" ? .88 : .98; u.pitch = 1.25;
-    const sc = v => (/premium|enhanced|aprimorad|melhorad/i.test(v.name) ? 4 : 0) + (/google|felipe|daniel/i.test(v.name) ? 1 : 0);
-    const v = voices.filter(v => (v.lang||"").toLowerCase().replace("_","-") === "pt-br").sort((a,b) => sc(b) - sc(a))[0];
-    if (v) u.voice = v;
-    const g = setTimeout(res, 2500 + text.length*110); u.onend = u.onerror = () => { clearTimeout(g); res(); };
+    const u = new SpeechSynthesisUtterance(text); u.lang = lang; u.rate = (K().age === "mini" ? .86 : .96) * (lang === "en-US" ? .92 : 1); u.pitch = 1.3;
+    const v = pickVoice(lang.toLowerCase()); if (v) u.voice = v;
+    const g = setTimeout(res, 2500 + text.length * 110); u.onend = u.onerror = () => { clearTimeout(g); res(); };
     try { speechSynthesis.speak(u); } catch(e){ res(); }
   });
+}
+async function deviceSay(text){
+  if (!("speechSynthesis" in window)) return;
+  const segs = text.split(/(?<=[!?.])\s+/).filter(Boolean);
+  for (const seg of segs){ const my = seq; await speakOne(seg, isEnglish(seg) ? "en-US" : "pt-BR"); if (my !== seq) return; }
 }
 let talkingSynthetic = false;
 async function say(text){
@@ -572,6 +642,8 @@ function tone(f, d, at = 0, type = "triangle", v = .18, slide){
   o.connect(g); g.connect(actx.destination); o.start(t0); o.stop(t0 + d + .02);
 }
 const sfx = {
+  boing:() => tone(330, .22, 0, "sine", .22, 660),
+  sparkle:() => [1568, 2093, 2637].forEach((f, i) => tone(f, .12, i * .06, "sine", .07)),
   pop:  () => { tone(900, .12, 0, "sine", .25, 1800); tone(1400, .08, .03, "sine", .12); },
   coin: () => { tone(988, .08, 0, "square", .05); tone(1319, .22, .07, "square", .05); },
   ok:   () => { tone(660, .12, 0); tone(880, .12, .09); tone(1320, .25, .18); },
@@ -624,112 +696,107 @@ function duck(on){ if (!musicGain || !actx || !musicTimer) return; try { musicGa
    POSES is the slot for more art: add a sprite + its eye/mouth boxes and the
    emotion controller can use it (visemes, pointing gestures, 3D later).
    ===================================================================== */
-const POSES = {
-  teach:  { src:"/pose-teach.jpg",  eyes:[{x:.527,y:.514,w:.165,h:.052,c:"#f1a07a"},{x:.885,y:.44,w:.165,h:.052,c:"#f4a27a"}], mouth:{x:.61,y:.658,w:.341,h:.123} },
-  call:   { src:"/pose-call.jpg",   eyes:[{x:.258,y:.359,w:.15,h:.047,c:"#f3a37e"},{x:.562,y:.287,w:.15,h:.047,c:"#f4a680"}],  mouth:{x:.375,y:.469,w:.25,h:.141} },
-  yeah:   { src:"/pose-yeah.jpg",   eyes:[], mouth:{x:.62,y:.559,w:.297,h:.128} },
-  almost: { src:"/pose-almost.jpg", eyes:[{x:.486,y:.648,w:.162,h:.051,c:"#ef9c74"},{x:.784,y:.526,w:.162,h:.051,c:"#f3a07a"}], mouth:{x:.676,y:.713,w:.189,h:.077} },
-};
-Object.values(POSES).forEach(p => { const i = new Image(); i.src = p.src; });
 const Hero = (() => {
-  const cam = $("#cam"), art = $("#camart"), A_ = $("#poseA"), B_ = $("#poseB"), lids = [$("#lidL"), $("#lidR")], mouth = $("#mouth"), stateEl = $("#camState");
-  let pose = null, front = A_, talking = false, nextBlink = 0, blinkT = -1, tilt = 0, tiltT = 0, lean = 1, leanT = 1, t0 = performance.now();
-  function setPose(name){
-    if (pose === name) return; pose = name; const p = POSES[name];
-    const back = front === A_ ? B_ : A_; back.src = p.src; back.style.opacity = 1; front.style.opacity = 0; front = back;
-    lids.forEach((l, i) => { const e = p.eyes[i]; if (!e){ l.hidden = true; return; } l.hidden = false; Object.assign(l.style, { left:(e.x - e.w/2)*100+"%", top:(e.y - e.h*1.1)*100+"%", width:e.w*100+"%", height:e.h*2.2*100+"%", background:`radial-gradient(ellipse at 50% 30%, ${e.c} 0 55%, rgba(0,0,0,0) 72%)` }); });
-    const m = p.mouth;
-    Object.assign(mouth.style, { left:m.x*100+"%", top:m.y*100+"%", width:m.w*100+"%", height:m.h*100+"%", backgroundImage:`url(${p.src})`, backgroundSize:`${100/m.w}% ${100/m.h}%`, backgroundPosition:`${m.x/(1-m.w)*100}% ${m.y/(1-m.h)*100}%` });
-  }
-  function frame(now){
-    const t = (now - t0) / 1000;
-    if (!cam.classList.contains("off")){
-      // breathing + gentle idle sway; head tilt when listening; lean in to encourage
-      tilt += (tiltT - tilt) * .08; lean += (leanT - lean) * .08;
-      const br = reduceMotion ? 0 : Math.sin(t * 1.6);
-      const sway = reduceMotion ? 0 : Math.sin(t * .7) * 1.2;
-      art.style.transform = `translate(${sway * 2}px, ${br * 1.5}px) rotate(${tilt + sway * .4}deg) scale(${lean * (1.03 + br * .008)})`;
-      // blinking (real eyelids over the eyes, not a rotation)
-      if (now > nextBlink && blinkT < 0 && POSES[pose] && POSES[pose].eyes.length){ blinkT = now; nextBlink = now + 2400 + Math.random() * 3200; }
-      let lidS = 0; if (blinkT >= 0){ const k = (now - blinkT) / 150; lidS = k < 1 ? Math.sin(Math.PI * k) : 0; if (k >= 1) blinkT = -1; }
-      lids.forEach(l => l.style.transform = `scaleY(${lidS})`);
-      // mouth follows his voice
-      const a = talking ? level01() : 0;
-      mouth.style.transform = `scaleY(${1 + a * .38})`;
-    }
-    requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
-  lids.forEach(l => { l.style.transform = "scaleY(0)"; });
-
-  /* flyer (full body) */
-  const fly = { el: $("#flyer"), x: innerWidth * .8, y: innerHeight * .3, vx:0, vy:0, tx:null, ty:null, size:120, mode:"hover", actT:0, act:null, dir:1, lastTrail:0, carry:null, onDone:null };
+  // Super Benjamin is always the full flying hero, loose in the air (no frame).
+  // modes: "follow" (hovers beside the thing he is showing), "wander" (drifts lazily over the scene while the child plays),
+  //        "glide"/"dash" (flying to a point for a moment)
+  const fly = { el: $("#flyer"), x: innerWidth * .8, y: innerHeight * .3, vx:0, vy:0, tx:null, ty:null, size:120, cur:120, mode:"wander", base:"wander", target:null, actT:0, act:null, dir:1, lastTrail:0, onDone:null, tilt:0, tiltT:0, lean:1, leanT:1, talking:false, last:0 };
   function flyerWear(){ fly.el.querySelectorAll(".wear").forEach(w => w.remove()); const it = SHOP.find(i => i.id === K().wear); if (it) fly.el.append(el("span","wear " + it.id, it.e)); }
-  function flyFrame(now){
+  function frame(now){
     const dt = Math.min(.05, (now - (fly.last || now)) / 1000); fly.last = now;
     if (!fly.el.hidden){
-      const W = innerWidth, H = innerHeight, s = fly.size;
-      let tx = fly.tx, ty = fly.ty;
-      if (fly.mode === "hover" && tx == null){ const t = now / 1000; tx = W * .78 + Math.sin(t * .5) * W * .1; ty = H * .5 + Math.sin(t * .8) * 30; }
-      const k = fly.mode === "dash" ? 6 : 2.2;
-      fly.vx += (((tx ?? fly.x) - fly.x) * k - fly.vx * 2.4) * dt; fly.vy += (((ty ?? fly.y) - fly.y) * k - fly.vy * 2.4) * dt;
+      const t = now / 1000, W = innerWidth, H = innerHeight, s = fly.cur;
+      let tx = fly.tx, ty = fly.ty, k = 2.2;
+      if (fly.mode === "follow" && fly.target && fly.target.isConnected){
+        const r = fly.target.getBoundingClientRect();
+        tx = Math.min(W - s * .42, r.right + s * .2) + Math.sin(t * .5) * 12;
+        ty = Math.max(70 + s * .3, r.top + s * .15) + Math.sin(t * .7) * 8;
+        k = 2.4;
+      } else if (fly.mode === "follow" || fly.mode === "wander"){
+        tx = W * (.5 + .3 * Math.sin(t * .3)); ty = 118 + s * .38 + Math.sin(t * .55) * 12; k = 1.1;
+      } else if (fly.mode === "dash") k = 6;
+      fly.vx += (((tx ?? fly.x) - fly.x) * k - fly.vx * 2.5) * dt; fly.vy += (((ty ?? fly.y) - fly.y) * k - fly.vy * 2.5) * dt;
       fly.x += fly.vx * dt; fly.y += fly.vy * dt;
-      if (fly.vx > 20) fly.dir = 1; else if (fly.vx < -20) fly.dir = -1;
-      let rot = Math.max(-16, Math.min(16, fly.vy * .1)) * fly.dir, sc = 1, oy = Math.sin(now / 480) * 5;
+      const speed = Math.hypot(fly.vx, fly.vy);
+      if (fly.vx > 25) fly.dir = 1; else if (fly.vx < -25) fly.dir = -1;
+      if (fly.mode === "follow" && speed < 40) fly.dir = -1;   // looks at what he is showing
+      fly.cur += (fly.size - fly.cur) * .1; fly.el.style.width = fly.cur + "px";
+      fly.tilt += (fly.tiltT - fly.tilt) * .08; fly.lean += (fly.leanT - fly.lean) * .08;
+      const talk = fly.talking ? level01() : 0;
+      let oy = reduceMotion ? 0 : Math.sin(t * 1.6) * 5 - talk * 6;
+      let rot = Math.max(-16, Math.min(16, fly.vy * .08)) * fly.dir + fly.tilt * fly.dir + (reduceMotion ? 0 : Math.sin(t * .8) * 1.5);
+      let sc = fly.lean * (1 + talk * .035);
       if (fly.act){
         fly.actT += dt; const p = fly.actT;
-        if (fly.act === "flip"){ const q = Math.min(1, p / 1.2); oy -= Math.sin(Math.PI * q) * 70; rot += 720 * q * fly.dir; sc *= 1 + Math.sin(Math.PI * q) * .2; if (p >= 1.2){ fly.act = null; fly.onDone && fly.onDone(); } }
-        if (fly.act === "wave"){ rot += Math.sin(p * 7) * 8; }
+        if (fly.act === "flip"){ const q = Math.min(1, p / 1.1); oy -= Math.sin(Math.PI * q) * 60; rot += 360 * q * fly.dir; sc *= 1 + Math.sin(Math.PI * q) * .15; if (p >= 1.1){ fly.act = null; fly.onDone && fly.onDone(); } }
+        else if (fly.act === "wave"){ rot += Math.sin(p * 6) * 6; }
+        else if (fly.act === "tramp"){   // golden trampoline: 3 bounces, the last one with a somersault
+          const D = 2.7, q = Math.min(1, p / D), f = q * 3, i = Math.min(2, Math.floor(f)), fr = f - Math.floor(f);
+          oy -= Math.sin(Math.PI * (q >= 1 ? 1 : fr)) * [110, 150, 200][i]; if (i === 2) rot += 360 * fr * fly.dir;
+          if (i !== fly.lastBounce && q < 1){ fly.lastBounce = i; fly.onBounce && fly.onBounce(); }
+          if (p >= D){ fly.act = null; fly.lastBounce = -1; fly.onDone && fly.onDone(); }
+        }
       }
       fly.el.style.transform = `translate(${fly.x - s/2}px, ${fly.y - s*.45 + oy}px) rotate(${rot}deg) scale(${sc * fly.dir}, ${sc})`;
-      if (K().trail && !reduceMotion && now - fly.lastTrail > 320 && Math.hypot(fly.vx, fly.vy) > 40){
+      if (K().trail && !reduceMotion && now - fly.lastTrail > 300 && speed > 110){
         fly.lastTrail = now; const it = SHOP.find(i => i.id === K().trail);
         if (it){ const b = el("span","trailbit", it.e); b.style.left = (fly.x - fly.dir * s * .42) + "px"; b.style.top = (fly.y + s * .12) + "px"; document.body.append(b); setTimeout(() => b.remove(), 1300); }
       }
     }
-    requestAnimationFrame(flyFrame);
+    requestAnimationFrame(frame);
   }
-  requestAnimationFrame(flyFrame);
+  requestAnimationFrame(frame);
   const flyTo = (x, y, mode = "glide") => new Promise(res => {
     fly.mode = mode; fly.tx = x; fly.ty = y; const t0 = performance.now();
     const chk = () => { if (Math.hypot(fly.x - x, fly.y - y) < 30 || performance.now() - t0 > 2200) res(); else requestAnimationFrame(chk); }; chk();
   });
-
+  const resume = () => { fly.mode = fly.base; fly.tx = fly.ty = null; };
+  const flyer = {
+    show(size = 120){ fly.size = size; if (fly.el.hidden) fly.cur = size; flyerWear(); fly.el.hidden = false; },
+    hide(){ fly.el.hidden = true; fly.tx = fly.ty = null; fly.mode = fly.base = "wander"; fly.act = null; },
+    place(x, y){ fly.x = x; fly.y = y; fly.vx = fly.vy = 0; },
+    to: flyTo,
+    hover: resume,
+    flip(){ return new Promise(res => { fly.act = "flip"; fly.actT = 0; fly.onDone = () => { fly.onDone = null; res(); }; }); },
+    wave(on){ fly.act = on ? "wave" : null; fly.actT = 0; },
+    carry(e){ fly.el.querySelector(".carry")?.remove(); if (e) fly.el.append(el("span","carry", e)); },
+    get pos(){ return { x: fly.x, y: fly.y, s: fly.cur }; },
+  };
   return {
-    setPose,
-    state(name){ stateEl.hidden = !name; stateEl.textContent = name || ""; },
-    talk(on){ talking = on; duck(on); },
-    tilt(deg){ tiltT = deg; },
-    lean(k){ leanT = k; },
-    show(mode){ cam.classList.remove("off"); cam.classList.toggle("small", mode === "small"); $("#adv").classList.toggle("play", mode === "small"); },
-    hideCam(){ cam.classList.add("off"); },
-    flyer: {
-      show(size = 120){ fly.size = size; fly.el.style.setProperty("--fs", size + "px"); flyerWear(); fly.el.hidden = false; },
-      hide(){ fly.el.hidden = true; fly.tx = fly.ty = null; fly.mode = "hover"; },
-      place(x, y){ fly.x = x; fly.y = y; fly.vx = fly.vy = 0; },
-      to: flyTo,
-      hover(){ fly.mode = "hover"; fly.tx = fly.ty = null; },
-      flip(){ return new Promise(res => { fly.act = "flip"; fly.actT = 0; fly.onDone = () => { fly.onDone = null; res(); }; }); },
-      wave(on){ fly.act = on ? "wave" : null; fly.actT = 0; },
-      carry(e){ fly.el.querySelector(".carry")?.remove(); if (e) fly.el.append(el("span","carry", e)); },
-      get pos(){ return { x: fly.x, y: fly.y }; },
+    talk(on){ fly.talking = on; duck(on); },
+    tilt(deg){ fly.tiltT = deg; },
+    lean(k){ fly.leanT = k; },
+    size(s){ fly.size = s; },
+    follow(node){ fly.target = node; fly.base = "follow"; if (fly.mode !== "dash" || !fly.act) resume(); },
+    wander(){ fly.target = null; fly.base = "wander"; resume(); },
+    resume,
+    /* a quick swoop to where the child tapped, then back */
+    trampoline(){
+      const T = $("#tramp"); T.hidden = false; T.classList.remove("out");
+      const r = T.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top - fly.cur * .28;
+      return flyTo(x, y, "dash").then(() => new Promise(res => {
+        fly.mode = "dash"; fly.tx = x; fly.ty = y; fly.act = "tramp"; fly.actT = 0; fly.lastBounce = -1;
+        fly.onBounce = () => { T.classList.remove("squash"); void T.offsetWidth; T.classList.add("squash"); sfx.boing(); };
+        fly.onDone = () => { fly.onDone = fly.onBounce = null; T.classList.add("out"); setTimeout(() => { T.hidden = true; }, 350); resume(); res(); };
+      }));
     },
+    async visit(x, y){ const back = fly.base; await flyTo(x, y - 30, "dash"); if (fly.base === back) resume(); },
+    flyer,
     wearChanged: flyerWear,
   };
 })();
 
-/* HeroEmotionController — one place that decides how Benjamin looks for each moment */
+/* HeroEmotionController — how Benjamin moves in each moment */
 const Emotion = {
   set(state){
-    const mic = $("#mic");
     switch (state){
-      case "teaching":  Hero.setPose("teach");  Hero.tilt(0);  Hero.lean(1);    Hero.state(""); break;
-      case "listening": Hero.setPose("call");   Hero.tilt(-3); Hero.lean(1.02); Hero.state("👂 ouvindo"); break;
-      case "thinking":  Hero.setPose("almost"); Hero.tilt(3);  Hero.lean(1);    Hero.state("🤔 pensando"); break;
-      case "almost":    Hero.setPose("almost"); Hero.tilt(-2); Hero.lean(1.08); Hero.state(""); break;
-      case "correct":   Hero.setPose("yeah");   Hero.tilt(0);  Hero.lean(1.06); Hero.state(""); break;
-      case "help":      Hero.setPose("call");   Hero.tilt(-4); Hero.lean(1.1);  Hero.state(""); break;
-      default:          Hero.setPose("teach");  Hero.tilt(0);  Hero.lean(1);    Hero.state("");
+      case "teaching":  Hero.tilt(0);  Hero.lean(1);    break;
+      case "listening": Hero.tilt(-7); Hero.lean(1.05); break;   // leans in to listen
+      case "thinking":  Hero.tilt(6);  Hero.lean(1);    break;
+      case "almost":    Hero.tilt(-4); Hero.lean(1.12); break;   // comes closer to encourage
+      case "correct":   Hero.tilt(0);  Hero.lean(1.08); break;
+      case "help":      Hero.tilt(-9); Hero.lean(1.12); break;
+      default:          Hero.tilt(0);  Hero.lean(1);
     }
     this.now = state;
   },
@@ -739,18 +806,25 @@ const Emotion = {
    WorldScene — every activity of a world happens inside that world
    ===================================================================== */
 const SCENES = {
+  "house-img": { img:"scene-house", deco:[] },
+  "forest-img": { img:"scene-forest", deco:[] },
+  "school-img": { img:"scene-school", deco:[] },
+  lab: { img:"scene-lab", deco:[] },
+  room: { wall:"linear-gradient(180deg,#FFE9C7,#FFD9A8)", floor:"linear-gradient(180deg,#E8B07A,#D89A62)", deco:[["window",70,8,96],["frame",6,14,72],["sofa",56,56,120],["lamp",4,52,80]], fly:[] },
   forest: { sky:"linear-gradient(180deg,#9FDBFF 0%,#CFF1FF 45%,#E9FBD9 70%)", hills:[["#9BE07A",-20,48,70,46],["#7CCB5C",40,52,80,40]], ground:"linear-gradient(180deg,#8EDB6C,#5DBB45)", river:58,
-            deco:[["🌳",4,40,76],["🌲",80,36,70],["🌳",62,44,58],["🌲",22,47,52],["🌼",10,78,30],["🌷",88,80,30],["🍄",30,86,28],["🌼",70,90,28],["🪨",52,70,26]], fly:["🦋","🐝"], bush:"🌿" },
-  house:  { wall:"linear-gradient(180deg,#FFE9C7,#FFD9A8)", floor:"linear-gradient(180deg,#E8B07A,#D89A62)", deco:[["🪟",76,14,64],["🖼️",12,18,48],["🪴",6,64,56],["🛋️",62,60,74],["🧸",88,74,40],["💡",44,10,36]], fly:["✨"], bush:"📦" },
+            deco:[["tree",2,36,96],["pine",80,30,90],["tree",62,42,70],["pine",22,44,62],["flower",8,76,46],["tulip",86,78,44],["mushroom",30,84,38],["flower",70,88,40],["rock",50,68,40]], fly:["butterfly","bee"], bush:"🌿" },
+  house:  { wall:"linear-gradient(180deg,#FFE9C7,#FFD9A8)", floor:"linear-gradient(180deg,#E8B07A,#D89A62)", deco:[["window",72,10,96],["frame",6,16,72],["plant",4,60,76],["sofa",56,56,110],["teddy",86,72,56],["lamp",40,8,52]], fly:[], bush:"📦" },
   city:   { sky:"linear-gradient(180deg,#A9DEFF 0%,#DDF3FF 50%,#FFF1D0 75%)", hills:[["#CFE0F5",-10,46,60,34]], ground:"linear-gradient(180deg,#B9E28E,#8CCB63)",
             deco:[["🏢",6,30,80],["🏬",74,28,84],["🏪",52,44,58],["🌳",30,50,50],["🎈",86,16,36],["🚦",20,68,40],["🌸",62,84,30]], fly:["🎈","🕊️"], bush:"🌳" },
   travel: { sky:"linear-gradient(180deg,#7ECBFF 0%,#BDE8FF 50%,#FFE8B8 75%)", hills:[["#4FB7E8",-15,54,130,34]], ground:"linear-gradient(180deg,#FFE3A1,#F6C870)",
             deco:[["🗽",8,34,70],["🗼",80,30,76],["🏝️",58,50,56],["🌍",34,18,40],["⛵",22,58,38],["🌴",90,66,52]], fly:["✈️","🕊️"], bush:"🧳" },
 };
 const Scene = {
-  render(worldIdx){
-    const W = WORLDS[worldIdx], S = SCENES[W.scene], box = $("#scene"); box.textContent = "";
-    if (S.wall){ const w = el("div","wall"); w.style.background = S.wall; box.append(w); const f = el("div","floor"); f.style.background = S.floor; box.append(f); }
+  render(worldIdx, sceneKey){
+    const W = WORLDS[worldIdx], S = SCENES[sceneKey || W.scene], box = $("#scene"); box.textContent = ""; box.style.background = "";
+    if (S.img){
+      const bg = el("div","bgimg"); bg.style.backgroundImage = `url(${ART.src(S.img)})`; box.append(bg, el("div","bgveil"));
+    } else if (S.wall){ const w = el("div","wall"); w.style.background = S.wall; box.append(w); const f = el("div","floor"); f.style.background = S.floor; box.append(f); }
     else {
       box.style.background = S.sky; box.append(el("div","sun"));
       for (let i = 0; i < 3; i++){ const c = el("div","cl"); c.style.cssText = `top:${10 + i * 11}%;animation-duration:${40 + i * 15}s;animation-delay:${-(i * 17)}s;transform:scale(${1 - i * .15})`; box.append(c); }
@@ -758,8 +832,8 @@ const Scene = {
       const g = el("div","ground"); g.style.background = S.ground; box.append(g);
       if (S.river){ const r = el("div","river"); r.style.top = S.river + "%"; box.append(r); }
     }
-    S.deco.forEach(([e, l, t, sz], i) => { const d = el("span","deco", e); d.style.cssText = `left:${l}%;top:${t}%;font-size:${sz}px;animation-delay:${-(i * .7)}s`; box.append(d); });
-    (S.fly || []).forEach((e, i) => { const b = el("span","bfly", e); b.style.cssText = `left:${10 + i * 50}%;top:${30 + i * 12}%;animation-delay:${-i * 3}s`; box.append(b); });
+    S.deco.forEach(([e, l, t, sz], i) => { const d = el("span","deco"); if (ART.has(e)) d.innerHTML = ART.html(e); else d.textContent = e; d.style.cssText = `left:${l}%;top:${t}%;font-size:${sz}px;animation-delay:${-(i * .7)}s` + (ART.has(e) ? `;width:${sz}px;height:${sz}px` : ""); box.append(d); });
+    (S.fly || []).forEach((e, i) => { const b = el("span","bfly"); if (ART.has(e)){ b.innerHTML = ART.html(e); b.style.width = b.style.height = "34px"; } else b.textContent = e; b.style.left = (10 + i * 50) + "%"; b.style.top = (30 + i * 12) + "%"; b.style.animationDelay = (-i * 3) + "s"; box.append(b); });
     this.bush = S.bush;
   },
 };
@@ -839,25 +913,26 @@ function addCoins(n, fromEl){
   }
 }
 const Celebrate = {
-  async correct(fromEl, word){
+  async correct(fromEl, word, soft){
     Emotion.set("correct"); sfx.ok();
-    $("#bubbleT").textContent = K().age === "mini" ? "Yeahhh! Muito bem!" : "Yeahhh! Você conseguiu!"; $("#bubbleS").textContent = word ? word.en + " = " + word.pt : "";
     const f = $("#flashok"); f.classList.remove("go"); void f.offsetWidth; f.classList.add("go");
-    const y = $("#yeah"); y.textContent = K().age === "mini" ? "Yeahhh! 🎉" : "Yeahhh!"; y.classList.remove("show"); void y.offsetWidth; y.classList.add("show");
-    const r = (fromEl || $("#cam")).getBoundingClientRect(); burst(r.left + r.width/2, r.top + r.height/2, 40);
-    // Benjamin leaves the camera for a quick loop around the scene
-    Hero.flyer.show(110); const c = $("#cam").getBoundingClientRect(); Hero.flyer.place(c.left + c.width/2, c.top + c.height/2);
-    Hero.flyer.to(innerWidth * .62, innerHeight * .34, "dash"); Hero.flyer.flip().then(() => Hero.flyer.to(c.left + c.width/2, c.top + c.height/2, "dash")).then(() => Hero.flyer.hide());
-    addCoins(3, fromEl || $("#cam"));
-    await say(pick(K().age === "mini" ? LINES.yeahMini : LINES.yeah));
+    const y = $("#yeah"); y.textContent = soft ? "Boa! ⭐" : "Yeahhh!"; y.classList.remove("show"); void y.offsetWidth; y.classList.add("show");
+    const src = fromEl && fromEl.isConnected ? fromEl : $("#flyer"), r = src.getBoundingClientRect(); burst(r.left + r.width/2, r.top + r.height/2, 44);
+    if (fromEl && fromEl.isConnected){ fromEl.classList.remove("wiggle"); void fromEl.offsetWidth; fromEl.classList.add("wiggle"); }
+    const hp = Hero.flyer.pos; Hero.flyer.to(hp.x, hp.y - 50, "dash").then(() => Hero.flyer.flip()).then(() => Hero.resume());
+    addCoins(3, src);
+    await say(pick(soft ? LINES.soft : K().age === "mini" ? LINES.yeahMini : LINES.yeah));
   },
-  small(fromEl){
-    sfx.pop(); const r = fromEl.getBoundingClientRect(); burst(r.left + r.width/2, r.top + r.height/2, 22); addCoins(2, fromEl);
+  async trampoline(){
+    sfx.ok(); const y = $("#yeah"); y.textContent = "Yeahhh!"; y.classList.remove("show"); void y.offsetWidth; y.classList.add("show");
+    say(pick(["Yeahhh!", "Great job!", "Uhuul!"]));
+    await Hero.trampoline(); const p = Hero.flyer.pos; burst(p.x, p.y, 50);
   },
+  small(fromEl){ sfx.pop(); const r = fromEl.getBoundingClientRect(); burst(r.left + r.width/2, r.top + r.height/2, 22); addCoins(1, fromEl); },
   /* the special achievement: up through golden clouds, back with a giant star */
   async special(){
     const g = $("#goldsky"); g.textContent = ""; for (let i = 0; i < 7; i++){ const c = el("i"); c.style.cssText = `left:${(i * 37) % 90}%;animation-delay:${-i * .17}s`; g.append(c); }
-    Hero.hideCam(); Hero.flyer.show(150); Hero.flyer.place(innerWidth / 2, innerHeight * .6);
+    Hero.flyer.show(150);
     sfx.whoosh(); await Hero.flyer.to(innerWidth / 2, -260, "dash");
     g.classList.remove("on"); void g.offsetWidth; g.classList.add("on");
     await wait(1100); Hero.flyer.carry("⭐"); Hero.flyer.place(innerWidth / 2, -200);
@@ -868,144 +943,170 @@ const Celebrate = {
 };
 
 /* =====================================================================
-   AdventureEngine — one progressive journey
+   AdventureEngine — one progressive journey, built on taps
+   each word: pop the magic bubble → meet the word → say it → catch it in the rising bubbles
+   end of level: drag to the shadows → (review) → special celebration
    ===================================================================== */
 const Adv = (() => {
-  let run = null;    // the level being played
-  const dots = $("#wordDots"), field = $("#field"), card = $("#card"), bubble = $("#bubble");
-  function talkBubble(main, sub, hl){
+  let run = null;
+  const dots = $("#wordDots"), field = $("#field"), stage = $("#stage"), sub = $("#bubble");
+  const adv = $("#adv");
+  function setSub(main, icon){
     const b = $("#bubbleT"); b.textContent = "";
-    if (hl && main.includes(hl)){ const [a, c] = main.split(hl); b.append(a, Object.assign(el("em"), { textContent: hl }), c); } else b.textContent = main;
-    $("#bubbleS").textContent = sub || ""; bubble.hidden = false; bubble.style.animation = "none"; void bubble.offsetWidth; bubble.style.animation = "";
+    if (icon){ const s = el("span","subart"); s.innerHTML = ART.html(icon); b.append(s); }
+    b.append(main); $("#bubbleS").textContent = "";
+    sub.hidden = false; sub.style.animation = "none"; void sub.offsetWidth; sub.style.animation = "";
   }
-  function showCard(w){
-    card.textContent = ""; card.hidden = false; card.style.animation = "none"; void card.offsetWidth; card.style.animation = "";
-    const wl = el("div","w"); wl.append(w.en.toUpperCase()); const s = el("button", null, "🔊"); s.setAttribute("aria-label","Ouvir"); s.onclick = () => { hush(); say(teachLine(w)); }; wl.append(s);
-    card.append(el("span","e", w.e), wl, el("span","p", w.pt));
-    card.onclick = e => { if (e.target === s) return; hush(); say(teachLine(w)); };
-  }
+  const showMic = on => { $("#micbar").hidden = !on; };
+  const tapOnce = node => new Promise(res => node.addEventListener("click", res, { once:true }));
   function renderDots(){
     dots.textContent = "";
-    run.words.forEach((w, i) => { const d = el("i", i < run.i ? "ok" : i === run.i ? "now" : "", i < run.i ? "✓" : w.e); dots.append(d); });
+    run.words.forEach((w, i) => { const d = el("i", i < run.i ? "ok" : i === run.i ? "now" : ""); if (i < run.i) d.textContent = "✓"; else d.innerHTML = ART.html(w.e); dots.append(d); });
   }
-  const teachLine = w => "Look! " + w.en + "! " + w.en + " é " + w.pt + ".";
-  const yourTurn  = w => "Agora é sua vez! Fala: " + w.en + "!";
+  function clearAll(){ delete stage.dataset.target; stage.textContent = ""; field.textContent = ""; $("#saidBtn").hidden = $("#skipBtn").hidden = true; }
 
-  /* teach → try → play, one word at a time */
+  /* 1. the magic bubble: the child taps to discover the word */
   async function teachWord(w){
-    const my = run.token;
-    Learning.seen(w.en);
-    field.textContent = ""; Hero.show("big"); Emotion.set("teaching");
-    showCard(w); talkBubble("Look! It's a " + w.en.toUpperCase() + "!", "Escute e repita comigo", w.en.toUpperCase());
-    Voice.setState("speaking", "");
-    await say(teachLine(w)); if (my !== run.token) return;
-    await tryWord(w, 0);
+    const my = run.token; Learning.seen(w.en);
+    clearAll(); adv.classList.remove("play"); showMic(false); Voice.setState("off", "");
+    const m = el("button","mystery"); m.setAttribute("aria-label","Estourar a bolha"); m.innerHTML = '<span class="q">?</span>';
+    stage.append(m); Hero.follow(m); Emotion.set("teaching");
+    setSub(K().age === "big" ? "Estoure a bolha mágica!" : "Toca na bolha!");
+    if (run.i === 0) say(K().age === "big" ? "Estoure a bolha mágica!" : "Toca na bolha!"); else sfx.sparkle();
+    const hint = setTimeout(() => m.classList.add("hint"), 4500);
+    await tapOnce(m); clearTimeout(hint); if (my !== run.token) return;
+    hush(); sfx.pop(); const r = m.getBoundingClientRect(); burst(r.left + r.width/2, r.top + r.height/2, 40, ["#BFE9FF","#FFFFFF","#8EDBFF","#FFD21F","#FF5FA2"]);
+    m.remove();
+    const big = el("button","bigart"); big.innerHTML = ART.html(w.e); big.setAttribute("aria-label", w.en);
+    const lab = el("div","wlabel"); lab.append(el("b", null, w.en.toUpperCase()), el("small", null, w.pt));
+    stage.append(big, lab); Hero.follow(big);
+    setSub(w.en.toUpperCase() + "!");
+    big.onclick = () => { big.classList.remove("wiggle"); void big.offsetWidth; big.classList.add("wiggle"); sfx.boing(); const b = big.getBoundingClientRect(); burst(b.left + b.width/2, b.top + b.height * .3, 10); hush(); say(w.en + "!"); };
+    await say(w.en + "! " + w.pt + "!"); if (my !== run.token) return;
+    await wait(250); if (my !== run.token) return;
+    speak(w, 0);
   }
-  async function tryWord(w, attempt){
-    const my = run.token;
-    Emotion.set("listening"); talkBubble("Now it's your turn! Fala: " + w.en.toUpperCase() + "!", "Toque no microfone se precisar", w.en.toUpperCase());
+
+  /* 2. say it */
+  async function speak(w, attempt){
+    const my = run.token; showMic(true);
+    Emotion.set("listening"); setSub("Fala: " + w.en.toUpperCase() + "!");
     Voice.setState("speaking", "");
-    await say(attempt ? "Agora você! Fala: " + w.en + "!" : yourTurn(w)); if (my !== run.token) return;
-    if (!Voice.available){ waitForSaid(w); return; }
+    await say("Fala: " + w.en + "!"); if (my !== run.token) return;
+    if (!Voice.available) return waitForSaid(w);
     Voice.setState("listening", "Estou ouvindo…");
-    const r = await Voice.listen(); if (my !== run.token) return;
-    await handleResult(w, r, attempt);
+    handleResult(w, await Voice.listen(), attempt);
   }
+  function showSkip(w){ const s = $("#skipBtn"); s.hidden = false; s.onclick = () => { s.hidden = true; $("#saidBtn").hidden = true; run.waitingMic = null; Voice.stop(); hush(); afterSpeak(w); }; }
   function waitForSaid(w){
-    // no microphone here (or permission denied): the grown-up confirms that the child spoke
-    Voice.setState("off", "Fale bem alto e toque em “Eu falei!”"); Hero.state("");
+    // no microphone here: the grown-up confirms that the child spoke
+    Voice.setState("off", "Fala bem alto e toca em “Eu falei!”");
     const b = $("#saidBtn"); b.hidden = false;
-    b.onclick = async () => { b.hidden = true; Learning.said(w.en, "part"); P().speaks++; await Celebrate.correct(null, w); afterSay(w); };
+    b.onclick = async () => { b.hidden = true; $("#skipBtn").hidden = true; Learning.said(w.en, "approx"); P().speaks++; await Celebrate.correct(stage.querySelector(".bigart"), w); afterSpeak(w); };
+    showSkip(w);
   }
   async function handleResult(w, r, attempt){
-    const my = run.token;
+    const my = run.token; if (!run || my !== run.token) return;
     if (r.kind === "unavailable") return waitForSaid(w);
     if (r.kind === "silence"){
-      // silence is not a mistake: offer help gently and wait for the child
-      Voice.setState("help", "Toque no microfone e fale comigo 😊"); Emotion.set("help");
-      talkBubble("Estou te ouvindo!", "Toque no microfone e fala: " + w.en);
-      await say("Estou te ouvindo! Toque no microfone e fala comigo: " + w.en + "!");
-      if (my !== run.token) return;
-      run.waitingMic = async () => { run.waitingMic = null; Voice.setState("listening", "Estou ouvindo…"); Emotion.set("listening"); const r2 = await Voice.listen(); if (my !== run.token) return; handleResult(w, r2, attempt); };
+      // silence is never a mistake: the mic waits for the child, and they can skip
+      Voice.setState("help", "Toca no microfone 🎤"); Emotion.set("help"); setSub("Toca no microfone e fala: " + w.en.toUpperCase());
+      if (!run.helped){ run.helped = true; await say("Toca no microfone e fala comigo!"); if (my !== run.token) return; }
+      showSkip(w);
+      run.waitingMic = async () => { run.waitingMic = null; $("#skipBtn").hidden = true; Voice.setState("listening", "Estou ouvindo…"); Emotion.set("listening"); const r2 = await Voice.listen(); if (my !== run.token) return; handleResult(w, r2, attempt); };
       return;
     }
-    Voice.setState("processing", "Hmm…"); Emotion.set("thinking"); await wait(500); if (my !== run.token) return;
-    const kind = Learning.evaluate(r.alts, w.en);
+    Voice.setState("processing", "Hmm…"); Emotion.set("thinking"); await wait(350); if (my !== run.token) return;
+    const kind = Learning.evaluate(r.alts, w.en), big = stage.querySelector(".bigart");
     if (kind === "exact" || kind === "approx"){
-      Learning.said(w.en, kind); P().speaks++; Voice.setState("ok", kind === "exact" ? "Perfeito! ⭐" : "Muito bem! ⭐");
-      await Celebrate.correct(null, w); if (my !== run.token) return;
-      return afterSay(w);
+      Learning.said(w.en, kind); P().speaks++; Voice.setState("ok", "⭐");
+      await Celebrate.correct(big, w); if (my !== run.token) return; return afterSpeak(w);
     }
     Learning.said(w.en, "attempt");
-    if (attempt + 1 < A().tries){
-      Voice.setState("unclear", "Quase! Vamos de novo"); Emotion.set("almost"); sfx.soft();
-      talkBubble("Quaaase! Vamos tentar juntinhos?", "Escute: " + w.en);
-      await say("Quaaase! Vamos tentar juntinhos? Escuta: " + w.en + "!"); if (my !== run.token) return;
-      return tryWord(w, attempt + 1);
+    if (K().age === "mini"){ // at 3–4 a real try counts as participation
+      P().speaks++; Voice.setState("ok", "⭐"); await Celebrate.correct(big, w, true); if (my !== run.token) return; return afterSpeak(w);
     }
-    // tried twice: that is real participation — praise the effort and move on (the word comes back for review)
-    Voice.setState("ok", "Boa tentativa! 💪"); Emotion.set("correct");
-    talkBubble("Muito bem por tentar!", w.en + " = " + w.pt);
-    await say("Muito bem por tentar! " + w.en + "! Vamos brincar com ele!"); if (my !== run.token) return;
-    afterSay(w);
+    if (attempt + 1 < A().tries){
+      Voice.setState("unclear", "Quase!"); Emotion.set("almost"); sfx.soft(); setSub("Quaaase! " + w.en.toUpperCase() + "!");
+      await say("Quaaase! " + w.en + "!"); if (my !== run.token) return;
+      Voice.setState("listening", "Estou ouvindo…"); Emotion.set("listening");
+      return handleResult(w, await Voice.listen(), attempt + 1);
+    }
+    Voice.setState("ok", "💪"); await Celebrate.correct(big, w, true); if (my !== run.token) return;
+    afterSpeak(w);
   }
-  async function afterSay(w){
-    if (!run) return;
-    Progress.save();
-    await findInScene(w);
+  async function afterSpeak(w){
+    if (!run) return; const my = run.token;
+    Progress.save(); $("#saidBtn").hidden = $("#skipBtn").hidden = true; Voice.setState("off", "");
+    await catchGame(w); if (my !== run.token) return;
+    nextWord();
   }
 
-  /* find the object inside the scene */
-  async function findInScene(w){
-    const my = run.token;
-    card.hidden = true; Hero.show("small"); Emotion.set("teaching"); Voice.setState("off", "");
-    talkBubble("Onde está o " + w.en.toUpperCase() + "?", "Toque nele!", w.en.toUpperCase());
-    field.textContent = "";
-    const n = A().choices, others = shuffle(run.allWords.filter(x => x.en !== w.en)).slice(0, n - 1);
-    const spots = shuffle([[20,30],[72,26],[44,62],[82,70],[18,78]]).slice(0, n);
-    const size = K().age === "mini" ? 128 : n > 3 ? 92 : 108;
-    let done = false, first = true;
-    shuffle([w, ...others]).forEach((o, k) => {
-      const [x, y] = spots[k];
-      const bush = el("span","bush", Scene.bush); bush.style.left = x + "%"; bush.style.top = y + "%"; field.append(bush);
-      const s = el("button","spot"); s.style.cssText = `left:${x}%;top:${y}%;--s:${size}px;animation-delay:${k * .15}s`; s.append(el("span", null, o.e)); s.setAttribute("aria-label", o.pt);
-      s.onclick = async () => {
-        if (done || my !== run.token) return;
-        if (o.en === w.en){
-          done = true; s.classList.add("right"); Learning.tapped(w.en, true); P().taps++; Celebrate.small(s); hush();
-          await say(pick(LINES.tap) + " " + w.en + "!"); if (my !== run.token) return;
-          s.classList.add("gone"); await wait(300); nextWord();
-        } else {
-          if (first) Learning.tapped(w.en, false); first = false;
-          s.classList.remove("shake"); void s.offsetWidth; s.classList.add("shake"); sfx.soft(); Hero.tilt(-4); setTimeout(() => Hero.tilt(0), 600);
-          hush(); const t = seq; await say("Esse é o " + o.en + "!"); if (t === seq && !done) say("Onde está o " + w.en + "?");
-        }
-      };
-      field.append(s);
+  /* 3. catch it: bubbles rise with the level's pictures — tap the ones that match */
+  function catchGame(w, pool){
+    return new Promise(resolve => {
+      const my = run.token; clearAll(); showMic(false); adv.classList.add("play");
+      Hero.size(K().age === "mini" ? 110 : 100); Hero.wander(); Emotion.set("teaching");
+      setSub("Pega o " + w.en.toUpperCase() + "!", w.e);
+      const age = K().age, need = age === "mini" ? 2 : 3, size = age === "mini" ? 132 : age === "kid" ? 116 : 104;
+      const dur = age === "mini" ? 8.5 : age === "kid" ? 7 : 6, every = age === "mini" ? 1500 : age === "kid" ? 1200 : 1000;
+      const others = shuffle((pool || run.allWords).filter(x => x.en !== w.en)).slice(0, A().choices);
+      let got = 0, n = 0, lastX = 50, done = false, wrongOnce = false;
+      const timer = setInterval(spawn, every);
+      function stop(){ done = true; clearInterval(timer); }
+      function spawn(){
+        if (done || my !== run.token) return stop();
+        const isT = n % 2 === 0 || Math.random() < .3; n++;
+        const o = isT ? w : pick(others.length ? others : [w]);
+        let x; do { x = 14 + Math.random() * 72; } while (Math.abs(x - lastX) < 22); lastX = x;
+        const b = el("button","bub" + (o.e.startsWith("balloon:") ? " balloon" : "")); b.style.cssText = `--x:${x}%;--s:${size}px;--d:${dur}s`; b.setAttribute("aria-label", o.pt); b.dataset.en = o.en;
+        const inn = el("span","in"); inn.innerHTML = ART.html(o.e); b.append(inn);
+        b.addEventListener("animationend", e => { if (e.animationName === "rise") b.remove(); });
+        b.onpointerdown = async ev => {
+          ev.preventDefault(); if (done || b.dataset.out) return;
+          const rr = b.getBoundingClientRect(), cx = rr.left + rr.width/2, cy = rr.top + rr.height/2;
+          if (o.en === w.en){
+            b.dataset.out = 1; const m = getComputedStyle(b).transform; b.style.transform = m === "none" ? "" : m; b.style.animation = "bpop .28s forwards";
+            Celebrate.small(b); Learning.tapped(w.en, true); P().taps++; got++;
+            Hero.visit(cx, cy); hush(); say(w.en + "!");
+            setTimeout(() => b.remove(), 300);
+            if (got >= need){
+              stop(); await wait(700); if (my !== run.token) return resolve();
+              field.querySelectorAll(".bub").forEach(x => { x.style.transition = "opacity .4s"; x.style.opacity = 0; });
+              await Celebrate.correct(null, w); resolve();
+            }
+          } else {
+            if (!wrongOnce){ wrongOnce = true; Learning.tapped(w.en, false); }
+            inn.classList.remove("nope"); void inn.offsetWidth; inn.classList.add("nope"); sfx.soft();
+            hush(); say("Esse é o " + o.en + "!");
+          }
+        };
+        field.append(b);
+      }
+      spawn();
+      if (run.i === 0 || age === "mini") say("Pega o " + w.en + "!"); else sfx.sparkle();
     });
-    await say("Onde está o " + w.en + "? Toque nele!");
   }
 
-  /* drag each picture to its shadow (5+). Tapping a picture and then its shadow also works. */
+  /* 4. drag each picture to its shadow (tapping a picture and then its shadow also works) */
   async function shadows(){
-    const my = run.token;
-    card.hidden = true; Hero.show("small"); Voice.setState("off", ""); Emotion.set("teaching");
-    talkBubble("Arraste cada figura para a sua sombra!", "Ou toque na figura e depois na sombra");
-    field.textContent = "";
-    const ws = shuffle(run.words).slice(0, 3);
+    const my = run.token; clearAll(); showMic(false); adv.classList.add("play"); Hero.wander(); Emotion.set("teaching");
+    setSub("Arrasta cada um pra sua sombra!");
+    const ws = shuffle(run.words).slice(0, K().age === "mini" ? 2 : 3);
     const top = el("div","shadows"), bot = el("div","pieces"); field.append(top, bot);
-    const holes = ws.map(w => { const h = el("div","shadow"); h.append(el("span", null, w.e)); h.dataset.en = w.en; top.append(h); return h; });
+    const holes = ws.map(w => { const h = el("div","shadow"); h.innerHTML = ART.html(w.e); h.dataset.en = w.en; top.append(h); return h; });
     let placed = 0, sel = null;
     const tryDrop = async (piece, hole) => {
       if (hole.dataset.en === piece.dataset.en){
-        hole.classList.add("done"); piece.remove(); placed++; Learning.tapped(piece.dataset.en, true); P().taps++; Celebrate.small(hole); hush(); say(piece.dataset.en + "!");
-        if (placed === ws.length){ await wait(900); if (my !== run.token) return; hush(); await say(pick(LINES.yeah)); review(); }
+        hole.classList.add("done"); piece.remove(); placed++; Learning.tapped(piece.dataset.en, true); P().taps++; Celebrate.small(hole);
+        const r = hole.getBoundingClientRect(); Hero.visit(r.left + r.width/2, r.top); hush(); say(piece.dataset.en + "!");
+        if (placed === ws.length){ await wait(800); if (my !== run.token) return; await Celebrate.correct(null); if (my !== run.token) return; review(); }
         return true;
       }
       sfx.soft(); hole.classList.remove("shake"); void hole.offsetWidth; hole.classList.add("shake"); return false;
     };
     shuffle(ws).forEach(w => {
-      const p = el("button","piece home", w.e); p.dataset.en = w.en; p.setAttribute("aria-label", w.pt); bot.append(p);
+      const p = el("button","piece home"); p.innerHTML = ART.html(w.e); p.dataset.en = w.en; p.setAttribute("aria-label", w.pt); bot.append(p);
       let sx = 0, sy = 0, dragging = false;
       p.addEventListener("pointerdown", e => { p.setPointerCapture(e.pointerId); sx = e.clientX; sy = e.clientY; dragging = false; });
       p.addEventListener("pointermove", e => { if (!p.hasPointerCapture(e.pointerId)) return; const dx = e.clientX - sx, dy = e.clientY - sy; if (!dragging && Math.hypot(dx, dy) > 8){ dragging = true; p.classList.add("drag"); p.classList.remove("home"); } if (dragging){ p.style.transform = `translate(${dx}px,${dy}px) scale(1.08)`; holes.forEach(h => { const r = h.getBoundingClientRect(); h.classList.toggle("hot", e.clientX > r.left && e.clientX < r.right && e.clientY > r.top && e.clientY < r.bottom); }); } });
@@ -1018,40 +1119,42 @@ const Adv = (() => {
       });
     });
     holes.forEach(h => h.onclick = () => { if (sel){ const s = sel; sel = null; s.classList.remove("sel"); tryDrop(s, h); } });
-    await say("Arraste cada figura para a sua sombra!");
+    await say("Arrasta pra sombra!");
   }
 
-  /* a word from an earlier level that is not consolidated yet */
+  /* 5. a word from an earlier level that is not consolidated yet (5+) */
   async function review(){
     const my = run.token;
-    const rv = Learning.review(run.idx, 1)[0];
+    const rv = K().age === "mini" ? null : Learning.review(run.idx, 1)[0];
     if (!rv) return finishLevel();
-    field.textContent = ""; Hero.show("big"); Emotion.set("teaching"); showCard(rv);
-    talkBubble("Lembra deste?", "Como se diz " + rv.pt + " em inglês?");
+    clearAll(); adv.classList.remove("play"); showMic(true); Hero.size(120);
+    const big = el("div","bigart"); big.innerHTML = ART.html(rv.e); stage.append(big); Hero.follow(big); Emotion.set("teaching");
+    setSub("Lembra? Como é " + rv.pt + "?");
     Voice.setState("speaking", "");
-    await say("Lembra deste? Como se diz " + rv.pt + " em inglês?"); if (my !== run.token) return;
-    run.reviewWord = rv;
-    if (!Voice.available){ Voice.setState("off", "Fale bem alto e toque em “Eu falei!”"); const b = $("#saidBtn"); b.hidden = false; b.onclick = async () => { b.hidden = true; Learning.said(rv.en, "part"); await Celebrate.correct(null, rv); finishLevel(); }; return; }
+    await say("Lembra? Como é " + rv.pt + "?"); if (my !== run.token) return;
+    const reveal = async ok => { const lab = el("div","wlabel"); lab.append(el("b", null, rv.en.toUpperCase()), el("small", null, rv.pt)); stage.append(lab); if (ok) await Celebrate.correct(big, rv); else { Emotion.set("teaching"); await say(rv.en + "!"); } };
+    if (!Voice.available){ Voice.setState("off", "Fala bem alto e toca em “Eu falei!”"); const b = $("#saidBtn"); b.hidden = false; b.onclick = async () => { b.hidden = true; Learning.said(rv.en, "approx"); await reveal(true); if (my === run.token) finishLevel(); }; return; }
     Voice.setState("listening", "Estou ouvindo…"); Emotion.set("listening");
     const r = await Voice.listen(); if (my !== run.token) return;
     const kind = r.kind === "heard" ? Learning.evaluate(r.alts, rv.en) : "silence";
-    if (kind === "exact" || kind === "approx"){ Learning.said(rv.en, kind); Learning.tapped(rv.en, true); Voice.setState("ok", "Lembrou! ⭐"); await Celebrate.correct(null, rv); }
-    else { if (kind === "attempt") Learning.said(rv.en, "attempt"); Voice.setState("ok", ""); Emotion.set("teaching"); await say(teachLine(rv)); }
+    if (kind === "exact" || kind === "approx"){ Learning.said(rv.en, kind); Learning.tapped(rv.en, true); Voice.setState("ok", "⭐"); await reveal(true); }
+    else { if (kind === "attempt") Learning.said(rv.en, "attempt"); Voice.setState("off", ""); await reveal(false); }
     if (my === run.token) finishLevel();
   }
 
   function nextWord(){
     run.i++; K().pos = { level: run.idx, word: run.i }; Progress.save(); renderDots();
+    Hero.size(K().age === "mini" ? 130 : 120);
     if (run.i < run.words.length) return teachWord(run.words[run.i]);
-    if (A().shadows) return shadows();
-    return review();
+    return shadows();
   }
 
   async function finishLevel(){
     const my = run.token;
-    Voice.setState("off", ""); card.hidden = true; field.textContent = ""; bubble.hidden = true;
+    Voice.setState("off", ""); clearAll(); showMic(false); sub.hidden = true;
     const ws = run.words, lv = ws.map(w => Learning.level(w.en));
-    const strong = lv.filter(l => l >= 3).length, stars = strong === ws.length ? 3 : strong >= Math.ceil(ws.length / 2) ? 2 : 1;
+    const strongW = w => { const r = K().words[w.en] || {}; return Learning.level(w.en) >= 3 || (r.tapOk || 0) + (r.cmdOk || 0) >= 2; };
+    const strong = ws.filter(strongW).length, stars = strong === ws.length ? 3 : strong >= Math.ceil(ws.length / 2) ? 2 : 1;
     const L = LEVELS[run.idx];
     const first = !K().done[L.id];
     K().done[L.id] = Math.max(K().done[L.id] || 0, stars);
@@ -1061,83 +1164,305 @@ const Adv = (() => {
     if (worldDone) Progress.medal("world-" + WORLDS[L.world].id);
     if (Object.keys(K().words).filter(e => Learning.level(e) >= 4).length >= 10) Progress.medal("ten-words");
     Progress.save();
-    await Celebrate.special(); if (my !== run.token) return;
-    Hero.flyer.to(innerWidth * .84, innerHeight * .1); Hero.flyer.wave(true);
+    await Celebrate.trampoline(); if (my !== run.token) return;
+    if (worldDone){ await Celebrate.special(); if (my !== run.token) return; }
+    Hero.flyer.to(innerWidth * .84, innerHeight * .1, "dash"); Hero.flyer.wave(true);
     const o = $("#over"); o.textContent = ""; o.hidden = false;
     o.append(el("h1", null, "Nível completo!"));
     const ss = el("div","stars3"); for (let i = 0; i < 3; i++) ss.append(el("span", i < stars ? "" : "off", "⭐")); o.append(ss);
-    const lw = el("div","learned");
     o.append(el("h2", null, "Você aprendeu:"));
-    ws.forEach((w, i) => { const d = el("div","lw"); d.append(w.e, el("b", null, w.en)); if (lv[i] >= 3) d.append(el("i", null, "✓")); else d.append(el("i","half","•")); lw.append(d); });
+    const lw = el("div","learned");
+    ws.forEach((w, i) => { const d = el("div","lw"); const a = el("span","la"); a.innerHTML = ART.html(w.e); d.append(a, el("b", null, w.en)); d.append(strongW(w) ? el("i", null, "✓") : el("i","half","•")); lw.append(d); });
     o.append(lw);
     const bonus = 10 + (stars === 3 ? 5 : 0) + (first ? 5 : 0);
     const nx = el("button","btn", run.idx + 1 < LEVELS.length ? "Próximo nível ➜" : "Voltar ao início");
     const pg = el("button","btn white small", "📊 Ver meu progresso");
     o.append(nx, pg);
     addCoins(bonus, ss);
-    nx.onclick = () => { hush(); o.hidden = true; Hero.flyer.wave(false); Hero.flyer.hide(); if (run.idx + 1 < LEVELS.length && !needsBreak()) start(run.idx + 1); else if (needsBreak()) farewell(); else goHome(); };
+    nx.onclick = () => { hush(); o.hidden = true; Hero.flyer.wave(false); Hero.flyer.hide(); if (needsBreak()) farewell(); else if (run.idx + 1 < LEVELS.length) start(run.idx + 1); else goHome(); };
     pg.onclick = () => { hush(); o.hidden = true; Hero.flyer.wave(false); Hero.flyer.hide(); goHome(); openTrophies(); };
-    await say("Nível completo! Você aprendeu muito hoje!");
-    if (worldDone) await say("E completou o mundo inteiro! Você é demais!");
+    await say(worldDone ? "Nível completo! E você terminou o mundo inteiro!" : "Nível completo! Uhuul!");
   }
 
   /* healthy sessions: after a while Benjamin suggests a break, without pressure */
   function needsBreak(){ return K().minutes >= A().minutes; }
   async function farewell(){
-    hush(); Voice.setState("off", "");
+    hush(); Voice.setState("off", ""); clearAll(); showMic(false); sub.hidden = true;
     const o = $("#over"); o.textContent = ""; o.hidden = false;
     o.append(el("div","cloudseat","☁️"));
     o.append(el("h2", null, "Adorei brincar com você!"));
     o.append(el("p", null, "Que tal descansar um pouquinho? Amanhã tem mais aventura."));
     const row = el("div","row2"); const bye = el("button","btn","Até amanhã 👋"), more = el("button","btn white small","Mais um nível");
     row.append(bye, more); o.append(row);
-    Hero.hideCam(); Hero.flyer.show(150); Hero.flyer.place(innerWidth / 2, innerHeight * .2); Hero.flyer.to(innerWidth / 2, innerHeight * .22); Hero.flyer.wave(true);
+    Hero.flyer.show(150); Hero.flyer.place(innerWidth / 2, -150); Hero.flyer.to(innerWidth / 2, innerHeight * .22); Hero.flyer.wave(true);
     bye.onclick = () => { hush(); Hero.flyer.wave(false); o.hidden = true; Hero.flyer.hide(); K().minutes = 0; Progress.save(); goHome(); };
     more.onclick = () => { hush(); Hero.flyer.wave(false); o.hidden = true; Hero.flyer.hide(); K().minutes = 0; Progress.save(); start(K().pos.level); };
-    await say("Adorei brincar e aprender com você! Que tal descansar um pouquinho? Amanhã tem mais aventura!");
+    await say("Adorei brincar com você! Amanhã tem mais!");
+  }
+
+  /* =====================================================================
+     LESSONS — the three hand-built aulas (Família, Brinquedos, Cores)
+     each one: welcome → discover by touch → 2–3 action challenges → optional speaking → review → trampoline
+     ===================================================================== */
+  const STOP = Symbol("stop");
+  const W_ = (en, pt, e) => ({ en, pt, e });
+  const PRAISE = ["Yes!", "Great!", "Good job!", "Yeahhh!", "Wow!"];
+  const PAINT = { red:"#E53935", blue:"#1E88E5", yellow:"#FDD835", green:"#43A047", pink:"#F06292" };
+  function pic(w, cls = "pick"){ const b = el("button", cls); b.innerHTML = ART.html(w.e); b.dataset.en = w.en; b.setAttribute("aria-label", w.en); return b; }
+  function tinted(w, color, painted){
+    const b = el("button","pick tintbox" + (painted ? " painted" : "")); b.dataset.en = w.en; b.style.setProperty("--c", color || "#fff");
+    b.innerHTML = ART.html(w.e); const t = el("span","tint"); t.style.setProperty("--m", `url(${ART.src(w.e)})`); b.append(t); return b;
+  }
+  function react(node, kind){ node.classList.remove("r-wave","r-bounce","r-drive","r-dance","r-pop"); void node.offsetWidth; node.classList.add("r-" + (kind || "pop")); }
+  function glow(node, on = true){ node.classList.toggle("glow", on); }
+
+  async function lessonRun(L){
+    const my = run.token;
+    const g = async p => { const v = await p; if (!run || run.token !== my) throw STOP; return v; };
+    const words = run.words;
+    const byEn = en => run.allWords.find(w => w.en === en);
+    const praise = async (node, big) => {
+      sfx.ok(); const r = (node || $("#flyer")).getBoundingClientRect(); burst(r.left + r.width/2, r.top + r.height/2, big ? 44 : 26); addCoins(big ? 3 : 2, node || $("#flyer"));
+      const hp = Hero.flyer.pos; Hero.flyer.to(hp.x, hp.y - 40, "dash").then(() => Hero.resume());
+      hush(); await g(say(pick(PRAISE)));
+    };
+    const tryAgain = async (node, hintNode, n) => {
+      sfx.soft(); node.classList.remove("shake"); void node.offsetWidth; node.classList.add("shake");
+      if (hintNode && n >= 2){ glow(hintNode); Hero.follow(hintNode); }   // a hint, not the answer: Benjamin flies next to it
+      hush(); await g(say("Try again!"));
+    };
+    const markDot = en => { const i = words.findIndex(w => w.en === en); if (i >= 0 && dots.children[i]){ dots.children[i].className = "ok"; dots.children[i].textContent = "✓"; } };
+
+    /* discover: every picture must be touched once; each touch reacts and says the word */
+    async function discover(list, line, reactions = {}){
+      clearAll(); showMic(false); adv.classList.remove("play"); Emotion.set("teaching");
+      const box = el("div","choices n" + list.length); stage.append(box);
+      const left = new Set(list.map(w => w.en));
+      setSub(line); Hero.wander();
+      await new Promise(async res => {
+        let idle = null; const nudge = () => { clearTimeout(idle); idle = setTimeout(() => { const n = [...box.children].find(c => left.has(c.dataset.en)); if (n){ glow(n); Hero.follow(n); } }, 4500); };
+        list.forEach((w, i) => {
+          const b = pic(w); b.style.animationDelay = (i * .12) + "s"; box.append(b);
+          b.onclick = async () => {
+            glow(b, false); react(b, reactions[w.en]); sfx.boing(); Hero.follow(b); Learning.seen(w.en); Learning.tapped(w.en, true);
+            const r = b.getBoundingClientRect(); burst(r.left + r.width/2, r.top + r.height * .3, 12);
+            hush(); const first = left.delete(w.en); if (first) P().taps++;
+            nudge();
+            await say(w.en + "! " + w.pt + "!");
+            if (!left.size){ clearTimeout(idle); res(); }
+          };
+        });
+        await say(line); nudge();
+      });
+      await g(wait(300));
+    }
+
+    /* choose: "Find Grandma!" — tap the right picture */
+    async function choose(target, options, line, opts = {}){
+      clearAll(); stage.dataset.target = target.en; showMic(false); adv.classList.remove("play"); Emotion.set("teaching"); Hero.wander();
+      const box = el("div","choices n" + options.length); stage.append(box);
+      setSub(line);
+      const nodes = shuffle(options).map((w, i) => { const b = opts.make ? opts.make(w) : pic(w); b.dataset.en = w.en; b.style.animationDelay = (i * .1) + "s"; box.append(b); return b; });
+      const right = nodes.find(n => n.dataset.en === target.en);
+      await g(say(opts.say || line));
+      let wrong = 0;
+      await g(new Promise(res => nodes.forEach(n => n.onclick = async () => {
+        if (n === right){ nodes.forEach(x => x.onclick = null); glow(n, false); n.classList.add("right"); react(n, opts.react); Learning.cmd(target.en, wrong === 0); P().taps++; markDot(target.en); await praise(n); res(); }
+        else { wrong++; if (wrong === 1) Learning.cmd(target.en, false); await tryAgain(n, right, wrong); }
+      })));
+      await g(wait(250));
+    }
+
+    /* drag: "Bring Dad home!" — drag the right picture to the target */
+    async function drag(target, options, line, targetNode, onDone, opts = {}){
+      clearAll(); stage.dataset.target = target.en; showMic(false); adv.classList.remove("play"); Emotion.set("teaching"); Hero.wander();
+      stage.append(targetNode); setSub(line);
+      const bot = el("div","pieces big"); field.append(bot);
+      shuffle(options).forEach(w => { const p = opts.make ? opts.make(w) : pic(w, "piece"); p.classList.add("piece","home"); p.classList.remove("pick"); p.dataset.en = w.en; bot.append(p); });
+      const right = bot.querySelector(`[data-en="${CSS.escape(target.en)}"]`);
+      await g(say(opts.say || line));
+      let wrong = 0;
+      await g(new Promise(res => {
+        bot.querySelectorAll(".piece").forEach(p => {
+          let sx = 0, sy = 0, dragging = false;
+          const over = e => { const r = targetNode.getBoundingClientRect(); return e.clientX > r.left - 20 && e.clientX < r.right + 20 && e.clientY > r.top - 20 && e.clientY < r.bottom + 20; };
+          p.addEventListener("pointerdown", e => { p.setPointerCapture(e.pointerId); sx = e.clientX; sy = e.clientY; dragging = false; });
+          p.addEventListener("pointermove", e => { if (!p.hasPointerCapture(e.pointerId)) return; const dx = e.clientX - sx, dy = e.clientY - sy; if (!dragging && Math.hypot(dx, dy) > 8){ dragging = true; p.classList.add("drag"); p.classList.remove("home"); } if (dragging){ p.style.transform = `translate(${dx}px,${dy}px) scale(1.08)`; targetNode.classList.toggle("hot", over(e)); } });
+          p.addEventListener("pointerup", async e => {
+            targetNode.classList.remove("hot");
+            if (!dragging){ hush(); react(p, "pop"); say(p.dataset.en + "!"); return; }   // a tap just says the word
+            p.classList.remove("drag"); p.classList.add("home");
+            if (!over(e)){ p.style.transform = ""; return; }
+            if (p === right){
+              bot.querySelectorAll(".piece").forEach(x => x.style.pointerEvents = "none");
+              Learning.cmd(target.en, wrong === 0); P().taps++; markDot(target.en);
+              await onDone(p, e); await praise(targetNode); res();
+            } else { p.style.transform = ""; wrong++; if (wrong === 1) Learning.cmd(target.en, false); await tryAgain(p, right, wrong); }
+          });
+        });
+      }));
+      await g(wait(250));
+    }
+
+    /* oral: "Who is this?" — the mic invites; a touch alternative is always there */
+    async function oral(target, line, altOptions, makeAlt){
+      clearAll(); stage.dataset.target = target.en; adv.classList.remove("play"); showMic(true); Hero.size(K().age === "mini" ? 130 : 120);
+      const big = el("div","bigart"); big.innerHTML = ART.html(target.e); if (makeAlt === "tint"){ big.classList.add("tintbox","painted"); big.style.setProperty("--c", PAINT[target.en]); big.innerHTML = ART.html(run.paintObj.e); const t = el("span","tint"); t.style.setProperty("--m", `url(${ART.src(run.paintObj.e)})`); big.append(t); }
+      stage.append(big); Hero.follow(big); Emotion.set("listening"); setSub(line);
+      const alt = el("div","altrow"); field.append(alt); alt.hidden = true;
+      let solved = false;
+      const finish = async (ok, node) => { if (solved) return; solved = true; alt.querySelectorAll("button").forEach(b => b.onclick = null); Voice.stop(); run.waitingMic = null; $("#saidBtn").hidden = $("#skipBtn").hidden = true;
+        if (ok){ markDot(target.en); P().speaks++; await praise(node || big, true); } else { hush(); await say(target.en + "!"); } };
+      const showAlt = () => {
+        if (alt.hidden === false) return; alt.hidden = false;
+        shuffle(altOptions).forEach(w => {
+          const b = el("button","altbtn"); if (makeAlt === "tint"){ b.innerHTML = ART.html(w.paint); b.classList.add("img"); } else { b.innerHTML = '<span class="spk">🔊</span>'; b.append(w.en.toUpperCase()); }
+          b.onclick = async () => { hush(); await say(w.en + "!"); if (solved) return; if (w.en === target.en){ Learning.cmd(target.en, true); await finish(true, b); res2(); } else { b.classList.remove("shake"); void b.offsetWidth; b.classList.add("shake"); sfx.soft(); } };
+          alt.append(b);
+        });
+        const s = $("#skipBtn"); s.hidden = false; s.onclick = async () => { await finish(false); res2(); };
+      };
+      let res2; const done = new Promise(r => res2 = r);
+      Voice.setState("speaking", ""); await g(say(line));
+      const listenOnce = async () => {
+        if (solved) return;
+        if (!Voice.available){ Voice.setState("off", ""); showAlt(); return; }
+        Voice.setState("listening", "Estou ouvindo…"); Emotion.set("listening");
+        const r = await Voice.listen(); if (!run || run.token !== my || solved) return;
+        if (r.kind === "heard"){
+          Voice.setState("processing", "Hmm…"); await wait(300);
+          const kind = Learning.evaluate(r.alts, target.en);
+          if (kind === "exact" || kind === "approx"){ Learning.said(target.en, kind); Voice.setState("ok", "⭐"); await finish(true); res2(); return; }
+          Learning.said(target.en, "attempt");
+          if (K().age === "mini"){ Voice.setState("ok", "⭐"); P().speaks++; markDot(target.en); solved = true; Voice.stop(); $("#skipBtn").hidden = true; await praise(big); res2(); return; }
+          Voice.setState("unclear", "Quase!"); Emotion.set("almost"); hush(); await say("Almost! " + target.en + "!");
+        } else { Voice.setState("help", "Toca no microfone 🎤"); Emotion.set("help"); }
+        showAlt();
+        run.waitingMic = async () => { run.waitingMic = null; await listenOnce(); };
+      };
+      listenOnce();
+      await g(done); Voice.setState("off", ""); await g(wait(250));
+    }
+
+    /* hide and seek: tap the boxes to find the toy */
+    async function seek(target, others, line){
+      clearAll(); stage.dataset.target = target.en; showMic(false); adv.classList.remove("play"); Emotion.set("teaching"); Hero.wander();
+      const box = el("div","choices n3"); stage.append(box); setSub(line);
+      const hidden = shuffle([target, ...others.slice(0, 2)]);
+      const boxes = hidden.map((w, i) => { const b = el("button","pick chestbox"); b.innerHTML = ART.html("chest"); b.dataset.en = w.en; b.style.animationDelay = (i * .1) + "s"; box.append(b); return b; });
+      await g(say(line));
+      let opened = 0;
+      await g(new Promise(res => boxes.forEach(b => b.onclick = async () => {
+        if (b.classList.contains("open")) return; b.classList.add("open"); opened++;
+        const w = hidden[boxes.indexOf(b)]; b.innerHTML = ART.html(w.e); react(b, "pop"); sfx.sparkle(); hush();
+        if (w.en === target.en){ boxes.forEach(x => x.onclick = null); Learning.cmd(target.en, opened === 1); P().taps++; markDot(target.en); await say(w.en + "!"); await praise(b, true); res(); }
+        else await say("That's the " + w.en + "!");
+      })));
+      await g(wait(250));
+    }
+
+    /* review in a new place: rising bubbles mixing old and new words */
+    async function bubbles(target, pool){ await g(catchGame(target, pool)); }
+
+    const age = K().age, mini = age === "mini", n = mini ? 2 : 3;
+    try {
+      if (L.script === "family"){
+        const [mom, dad, grandma, grandpa] = ["mom","dad","grandma","grandpa"].map(byEn), baby = byEn("baby");
+        const fam = [mom, dad, grandma, grandpa];
+        const door = () => { const d = el("div","zone house"); d.innerHTML = ART.html("door"); return d; };
+        await discover(fam, "Let's meet the family!", { mom:"wave", dad:"wave", grandma:"wave", grandpa:"wave" });
+        await choose(grandma, [grandma, ...shuffle([mom, dad, grandpa]).slice(0, n - 1)], "Find Grandma!", { react:"wave" });
+        await choose(dad, [dad, ...shuffle([mom, grandma, grandpa]).slice(0, n - 1)], "Find Dad!", { react:"wave" });
+        await drag(dad, [dad, ...shuffle([mom, grandma]).slice(0, n - 1)], "Bring Dad home!", door(), async p => { p.classList.add("in-house"); sfx.whoosh(); await wait(600); });
+        await Celebrate.trampoline();
+        await drag(grandma, [grandma, ...shuffle([mom, grandpa]).slice(0, n - 1)], "Bring Grandma home!", door(), async p => { p.classList.add("in-house"); sfx.whoosh(); await wait(600); });
+        await oral(grandpa, "Who is this?", [grandpa, mom].concat(mini ? [] : [grandma]));
+        if (baby) await discover([baby], "Look! A baby!", { baby:"dance" });
+        await choose(mom, [mom, ...shuffle([dad, grandma, grandpa, baby].filter(Boolean)).slice(0, n - 1)], "Where is Mom?", { react:"wave" });
+        await bubbles(dad, [mom, grandma, grandpa]);
+      }
+      else if (L.script === "toys"){
+        const [ball, car, teddy] = ["ball","car","teddy bear"].map(byEn), doll = byEn("doll"), bike = byEn("bike");
+        await discover([ball, car, teddy], "Look at my toys!", { ball:"bounce", car:"drive", "teddy bear":"dance" });
+        await choose(ball, [ball, car, teddy].slice(0, Math.max(n, 2)), "Find the ball!", { react:"bounce" });
+        const track = el("div","zone track"); track.innerHTML = '<span class="flag"></span>';
+        await drag(car, mini ? [car, ball] : [car, ball, teddy], "Make the car go!", track, async p => { const c = el("div","racer"); c.innerHTML = ART.html(car.e); track.append(c); p.remove(); sfx.whoosh(); await wait(1300); });
+        await seek(teddy, [ball, car], "Where's the teddy bear?");
+        await Celebrate.trampoline();
+        await oral(ball, "Can you say ball?", [ball, car].concat(mini ? [] : [teddy]));
+        if (doll && bike) await discover([doll, bike], "New toys!", { doll:"dance", bike:"drive" });
+        await choose(car, [car, ...shuffle([ball, teddy, doll, bike].filter(Boolean)).slice(0, n - 1)], "Find the car!", { react:"drive" });
+        const fam = LEVELS.find(l => l.id === "aula-family");
+        const famWords = fam ? fam.words.slice(0, 2).map(([en, pt, e]) => W_(en, pt, e)) : [];
+        await bubbles(teddy, [ball, car].concat(famWords));
+      }
+      else if (L.script === "colors"){
+        const C = ["red","blue","yellow","green"].map(byEn), [red, blue, yellow, green] = C, pink = byEn("pink");
+        const toy = k => ({ en:k, e:k });
+        await discover(C, "Let's paint!", { red:"pop", blue:"pop", yellow:"pop", green:"pop" });
+        // paint the car red
+        const pot = w => { const p = pic(w); p.dataset.en = w.en; return p; };
+        const carBox = tinted(toy("car"), PAINT.red); carBox.classList.add("zone","canvas"); carBox.disabled = true;
+        await drag(red, mini ? [red, blue] : [red, blue, yellow], "Make it red!", carBox, async p => { p.remove(); carBox.classList.add("painted"); sfx.sparkle(); await wait(500); react(carBox, "drive"); await wait(700); }, { make: pot });
+        const ballBox = tinted(toy("soccer"), PAINT.blue); ballBox.classList.add("zone","canvas"); ballBox.disabled = true;
+        await drag(blue, mini ? [blue, red] : [blue, red, green], "Paint the ball blue!", ballBox, async p => { p.remove(); ballBox.classList.add("painted"); sfx.sparkle(); await wait(500); react(ballBox, "bounce"); await wait(700); }, { make: pot });
+        await Celebrate.trampoline();
+        // find the yellow toy (colour + toy words together)
+        const toys = [["teddy","yellow"],["car","red"],["ball","blue"],["robot","green"]];
+        const yellowSet = [yellow, red, blue, green].slice(0, n).map((c, i) => Object.assign({}, c, { obj: toys.find(t => t[1] === c.en)[0] }));
+        await choose(yellow, yellowSet, "Find the yellow toy!", { make: c => tinted(toy(c.obj), PAINT[c.en], true), react:"dance" });
+        const greenSet = [green, red, blue, yellow].slice(0, n).map(c => Object.assign({}, c, { obj: toys.find(t => t[1] === c.en)[0] }));
+        await choose(green, greenSet, "Find the green toy!", { make: c => tinted(toy(c.obj), PAINT[c.en], true), react:"dance" });
+        // what colour? (touch alternative: the paint pots)
+        run.paintObj = toy("teddy");
+        await oral(red, "What color?", [red, blue].concat(mini ? [] : [yellow]).map(c => Object.assign({}, c, { paint: c.e })), "tint");
+        if (pink) await discover([pink], "Look! Pink!", { pink:"pop" });
+        await bubbles(blue, [red, yellow, green]);
+      }
+    } catch (e){ if (e === STOP) return; throw e; }
+    if (run && run.token === my) finishLevel();
   }
 
   /* entering the adventure */
   async function start(idx, resumeAt = 0){
     hush(); Voice.stop();
     const L = LEVELS[idx], W = WORLDS[L.world];
-    const words = levelWords(L);
-    run = { idx, i: Math.min(resumeAt, words.length - 1), words, allWords: L.words.map(([en, pt, e]) => ({ en, pt, e })), token: Math.random(), waitingMic:null };
-    if (run.allWords.length < A().choices) run.allWords = LEVELS.slice(0, 3).flatMap(levelWords);
+    const words = L.kind === "lesson" ? L.words.slice(0, L.core).map(([en, pt, e]) => ({ en, pt, e })) : levelWords(L);
+    if (L.kind === "lesson") resumeAt = 0;
+    run = { idx, i: Math.min(resumeAt, words.length - 1), words, allWords: L.words.map(([en, pt, e]) => ({ en, pt, e })), token: Math.random(), waitingMic:null, helped:false };
     K().pos = { level: idx, word: run.i }; Progress.touchDay(); Progress.save();
-    $("#home").hidden = true; $("#adv").hidden = false; $("#over").hidden = true; $("#saidBtn").hidden = true;
-    Scene.render(L.world); renderDots(); field.textContent = ""; card.hidden = true; bubble.hidden = true; Hero.hideCam();
-    musicOn(); Voice.setState("speaking", "");
-    prefetch(["Nível " + (idx + 1) + ": " + L.title + "!", teachLine(words[run.i]), yourTurn(words[run.i])]);
-    // entrance: the world appears, Benjamin flies in and opens his camera
+    $("#home").hidden = true; adv.hidden = false; $("#over").hidden = true;
+    Scene.render(L.world, L.scene); renderDots(); clearAll(); sub.hidden = true; showMic(false); adv.classList.remove("play");
+    musicOn(); Voice.setState("off", "");
+    const w0 = words[run.i];
+    prefetch(L.kind === "lesson" ? [L.title + "!", w0.en + "! " + w0.pt + "!", "Try again!", "Yes!", "Great!"] : [L.title + "!", "Toca na bolha!", w0.en + "! " + w0.pt + "!", "Fala: " + w0.en + "!", "Pega o " + w0.en + "!"]);
+    // entrance: the world appears, Benjamin flies in with a somersault
     const o = $("#over"); o.textContent = ""; o.hidden = false; o.style.background = "transparent";
-    const ic = el("div","introcard"); ic.append(el("span","tag", W.name), el("span","ic", L.icon), el("b", null, "Nível " + (idx + 1) + ": " + L.title), el("span","tag", L.goal)); o.append(ic);
-    Hero.flyer.show(140); Hero.flyer.place(innerWidth + 120, innerHeight * .7); sfx.whoosh();
+    const ic = el("div","introcard"); const art = el("span","ic"); art.innerHTML = ART.html(L.icon);
+    ic.append(el("span","tag", W.name), art, el("b", null, "Nível " + (idx + 1) + ": " + L.title)); o.append(ic);
+    Hero.size(150); Hero.flyer.show(150); Hero.flyer.place(innerWidth + 120, innerHeight * .2); sfx.whoosh();
     const my = run.token;
     Hero.flyer.to(innerWidth * .5, innerHeight * .2, "dash").then(() => Hero.flyer.flip());
     const firstVisit = !Object.keys(K().done).some(id => LEVELS.find(l => l.id === id)?.world === L.world);
-    if (firstVisit) await say("Bem-vindo à " + W.name + "!");
+    await say((firstVisit ? W.name + "! " : "") + L.title + "!");
     if (my !== run.token) return;
-    await say("Nível " + (idx + 1) + ": " + L.title + "! Vamos nessa?");
-    if (my !== run.token) return;
-    const c = $("#cam").getBoundingClientRect();
-    await Hero.flyer.to(c.left + c.width * .5, c.top + c.height * .5, "dash");
-    Hero.flyer.hide(); o.hidden = true; o.style.background = "";
-    if (my !== run.token) return;
-    teachWord(words[run.i]);
+    await wait(500); if (my !== run.token) return;
+    o.hidden = true; o.style.background = "";
+    Hero.size(K().age === "mini" ? 130 : 120);
+    if (L.kind === "lesson") lessonRun(L); else teachWord(words[run.i]);
   }
 
   /* side buttons */
-  $("#repeatBtn").onclick = () => { if (!run) return; const w = run.reviewWord && !card.hidden ? run.reviewWord : run.words[run.i]; if (!w) return; hush(); Voice.stop(); Emotion.set("teaching"); say(teachLine(w)).then(() => { if (Emotion.now === "teaching") Emotion.set("listening"); }); };
-  $("#helpBtn").onclick = async () => { if (!run) return; const w = run.words[run.i]; if (!w) return; hush(); Voice.stop(); Emotion.set("help"); await say("Escuta bem devagar: " + w.en + "! " + w.en + "! Agora toque no microfone e fala comigo!"); Voice.setState("help", "Toque no microfone 🎤"); run.waitingMic = run.waitingMic || (async () => { run.waitingMic = null; Voice.setState("listening", "Estou ouvindo…"); Emotion.set("listening"); const my = run.token; const r = await Voice.listen(); if (my === run.token) handleResult(w, r, 0); }); };
+  $("#repeatBtn").onclick = () => { if (!run) return; const w = run.words[run.i]; if (!w) return; hush(); say(w.en + "!"); };
+  $("#helpBtn").onclick = async () => { if (!run) return; const w = run.words[run.i]; if (!w) return; hush(); Voice.stop(); Emotion.set("help"); await say(w.en + "! " + w.en + "!"); Voice.setState("help", "Toca no microfone 🎤"); run.waitingMic = run.waitingMic || (async () => { run.waitingMic = null; Voice.setState("listening", "Estou ouvindo…"); Emotion.set("listening"); const my = run.token; const r = await Voice.listen(); if (my === run.token) handleResult(w, r, 0); }); showSkip(w); };
   $("#mic").onclick = () => {
     if (!run) return;
     if (run.waitingMic){ hush(); run.waitingMic(); return; }
     if ($("#mic").dataset.s === "listening") return;
-    if (!Voice.available) { Voice.setState("off", "Fale bem alto e toque em “Eu falei!”"); $("#saidBtn").hidden = false; }
+    if (!Voice.available){ Voice.setState("off", "Fala bem alto e toca em “Eu falei!”"); $("#saidBtn").hidden = false; }
   };
   $("#advBack").onclick = () => { stop(); goHome(); };
-  function stop(){ if (run) run.token = Math.random(); hush(); Voice.stop(); Hero.flyer.hide(); $("#over").hidden = true; }
+  function stop(){ if (run) run.token = Math.random(); hush(); Voice.stop(); Hero.flyer.hide(); $("#over").hidden = true; clearAll(); }
   return { start, stop, get running(){ return !!run; }, farewell };
 })();
 const P = () => Progress.daily();
@@ -1232,7 +1557,7 @@ function openTrophies(){
       const c = el("div","card"); c.append(el("b", null, w.icon + " " + w.name));
       w.levels.forEach(l => {
         const idx = LEVELS.findIndex(x => x.id === l.id), st = K().done[l.id] || 0, locked = idx > K().pos.level && !st;
-        const r = el("div","lvl" + (locked ? " lock" : "")); r.append(el("span","ic", locked ? "🔒" : l.icon), el("span", null, (idx + 1) + ". " + l.title), el("span", null, "⭐".repeat(st) || (idx === K().pos.level ? "▶" : "")));
+        const r = el("div","lvl" + (locked ? " lock" : "")); const ic = el("span","ic"); if (locked) ic.textContent = "🔒"; else ic.innerHTML = ART.html(l.icon); r.append(ic, el("span", null, (idx + 1) + ". " + l.title), el("span", null, "⭐".repeat(st) || (idx === K().pos.level ? "▶" : "")));
         c.append(r);
       });
       p.append(c);
@@ -1248,7 +1573,7 @@ function openAlbum(){
     WORLDS.forEach(w => {
       const c = el("div","card"); c.append(el("b", null, w.icon + " " + w.name));
       const g = el("div","grid4"); g.style.marginTop = "8px";
-      w.levels.flatMap(levelWords).forEach((x, i) => { const lv = Learning.level(x.en); const d = el("div","stk" + (lv >= 4 ? "" : lv >= 1 ? " half" : " no"), lv >= 1 ? x.e : "?"); d.style.setProperty("--r", ((i*37)%7 - 3) + "deg"); if (lv >= 1) d.append(el("small", null, x.en)); g.append(d); });
+      w.levels.flatMap(levelWords).forEach((x, i) => { const lv = Learning.level(x.en); const d = el("div","stk" + (lv >= 4 ? "" : lv >= 1 ? " half" : " no")); if (lv >= 1){ const a = el("span","sa"); a.innerHTML = ART.html(x.e); d.append(a); } else d.textContent = "?"; d.style.setProperty("--r", ((i*37)%7 - 3) + "deg"); if (lv >= 1) d.append(el("small", null, x.en)); g.append(d); });
       c.append(g); p.append(c);
     });
     p.append(el("p","note","Figurinha com bolinha laranja: quase lá! Ela volta na revisão para ficar completa."));
